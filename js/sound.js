@@ -88,6 +88,25 @@ window.Sound = (function () {
     click: function () {
       play([[880, 0, 0.06, 'sine', 0.1]]);
     },
+    /** Flat card-terminal blip, the sound a real reader makes on a keypress. */
+    terminal: function () {
+      play([[1200, 0, 0.07, 'square', 0.08]]);
+    },
+    /** Payment accepted: the two-tone chirp every card reader in the world uses. */
+    approved: function () {
+      play([
+        [1047, 0, 0.12, 'sine', 0.2],
+        [1568, 0.13, 0.28, 'sine', 0.22]
+      ]);
+    },
+    /** Coins into the till. */
+    coins: function () {
+      play([
+        [1760, 0, 0.07, 'triangle', 0.12],
+        [2093, 0.06, 0.07, 'triangle', 0.1],
+        [1568, 0.13, 0.1, 'triangle', 0.12]
+      ]);
+    },
 
     /** Warm the audio context up during the first user gesture. */
     unlock: function () {

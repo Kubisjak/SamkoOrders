@@ -32,7 +32,19 @@ window.I18N = {
       language: 'Jazyk',
       sent: 'Objednávka odoslaná!',
       confirmClearAll: 'Zmazať všetky objednávky?',
-      clearAll: 'Zmazať všetko'
+      clearAll: 'Zmazať všetko',
+      pay: 'Zaplatiť',
+      payCard: 'Kartou',
+      payCash: 'Hotovosť',
+      payLater: 'Zaplatiť neskôr',
+      paid: 'Zaplatené',
+      howPay: 'Ako chceš zaplatiť?',
+      tapCard: 'Prilož kartu',
+      processing: 'Spracúva sa',
+      approved: 'SCHVÁLENÉ',
+      thanks: 'Ďakujeme!',
+      done: 'Hotovo',
+      receiptFor: 'Účet č.'
     },
     en: {
       appName: "Samko's Restaurant",
@@ -60,7 +72,19 @@ window.I18N = {
       language: 'Language',
       sent: 'Order sent!',
       confirmClearAll: 'Delete all orders?',
-      clearAll: 'Clear all'
+      clearAll: 'Clear all',
+      pay: 'Pay',
+      payCard: 'Card',
+      payCash: 'Cash',
+      payLater: 'Pay later',
+      paid: 'Paid',
+      howPay: 'How do you want to pay?',
+      tapCard: 'Tap your card',
+      processing: 'Processing',
+      approved: 'APPROVED',
+      thanks: 'Thank you!',
+      done: 'Done',
+      receiptFor: 'Bill no.'
     }
   },
 

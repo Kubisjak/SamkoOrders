@@ -12,7 +12,12 @@
   var currentCategoryId = window.MENU.categories[0].id;
   /** Guards the food grid rebuild: only category and language change its markup. */
   var renderedGrid = null;
-  var toastTimer = null;
+  var tablesOpen = false;
+
+  /** Order currently on the terminal, and how far through paying it is. */
+  var payingOrderId = null;
+  var payPhase = 'idle'; // idle | busy | done
+  var payTimers = [];
 
   var STATUS_FLOW = {
     new: { next: 'cooking', actionKey: 'startCooking', labelKey: 'statusNew' },
@@ -60,15 +65,6 @@
     });
   }
 
-  // --- Fun ------------------------------------------------------------------
-
-  function toast(message) {
-    el.toast.textContent = message;
-    el.toast.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.toast.hidden = true; }, 1800);
-  }
-
   function confetti(emojis) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     for (var i = 0; i < 26; i++) {
@@ -83,6 +79,10 @@
         setTimeout(function () { n.remove(); }, (duration + 0.6) * 1000);
       })(bit);
     }
+  }
+
+  function tableFor(id) {
+    return window.MENU.tables.filter(function (t) { return t.id === id; })[0];
   }
 
   // --- Rendering ------------------------------------------------------------
@@ -109,6 +109,13 @@
 
   function renderTables() {
     var state = window.Store.getState();
+    var current = tableFor(state.table);
+
+    el.tableToggle.textContent = current.emoji + ' ' + window.I18N.t('table') + ' ' + current.id +
+      (tablesOpen ? ' ▴' : ' ▾');
+    el.tableToggle.setAttribute('aria-expanded', String(tablesOpen));
+    el.tables.hidden = !tablesOpen;
+
     reconcile(
       el.tables,
       window.MENU.tables.map(function (table) { return String(table.id); }),
@@ -121,14 +128,16 @@
         return button;
       },
       function (button, key) {
-        var table = window.MENU.tables.filter(function (t) { return String(t.id) === key; })[0];
+        var table = tableFor(Number(key));
         var active = state.table === table.id;
         button.children[0].textContent = table.emoji;
-        button.children[1].textContent = window.I18N.t('table') + ' ' + table.id;
+        button.children[1].textContent = table.id;
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-checked', String(active));
+        button.setAttribute('aria-label', window.I18N.t('table') + ' ' + table.id);
         button.onclick = function () {
           window.Sound.click();
+          tablesOpen = false;   // picking one folds the row away again
           window.Store.setTable(table.id);
         };
       }
@@ -205,9 +214,7 @@
 
   function renderTicket() {
     var state = window.Store.getState();
-    var table = window.MENU.tables.filter(function (t) { return t.id === state.table; })[0];
 
-    el.ticketTable.textContent = table.emoji + ' ' + window.I18N.t('table') + ' ' + table.id;
     el.ticketEmpty.hidden = state.draft.length > 0;
     el.ticketLines.hidden = state.draft.length === 0;
     el.ticketTotal.textContent = window.Store.draftTotal();
@@ -277,25 +284,29 @@
         var head = node('div', 'order__head');
         head.appendChild(node('span', 'order__ticket'));
         head.appendChild(node('span', 'order__table'));
+        head.appendChild(node('span', 'order__paid'));
         head.appendChild(node('span', 'order__status'));
         card.appendChild(head);
         card.appendChild(node('ul', 'order__items'));
 
         var foot = node('div', 'order__foot');
         foot.appendChild(node('span', 'order__total'));
+        var pay = node('button', 'order__pay');
+        pay.type = 'button';
         var action = node('button', 'order__action');
         action.type = 'button';
         var del = node('button', 'order__delete', '\u{1F5D1}\u{FE0F}');
         del.type = 'button';
+        foot.appendChild(pay);
         foot.appendChild(action);
         foot.appendChild(del);
         card.appendChild(foot);
         return card;
       },
       function (card, key) {
-        var order = state.orders.filter(function (o) { return o.id === key; })[0];
+        var order = window.Store.getOrder(key);
         var flow = STATUS_FLOW[order.status] || STATUS_FLOW.new;
-        var table = window.MENU.tables.filter(function (t) { return t.id === order.table; })[0];
+        var table = tableFor(order.table);
 
         card.className = 'order order--' + order.status;
 
@@ -303,7 +314,9 @@
         head.children[0].textContent = '#' + order.ticket;
         head.children[1].textContent = (table ? table.emoji + ' ' : '') +
           window.I18N.t('table') + ' ' + order.table;
-        head.children[2].textContent = window.I18N.t(flow.labelKey);
+        head.children[2].textContent = '\u{1F4B3} ' + window.I18N.t('paid');
+        head.children[2].hidden = !order.paid;
+        head.children[3].textContent = window.I18N.t(flow.labelKey);
 
         var items = card.children[1];
         items.textContent = '';
@@ -319,7 +332,15 @@
         var foot = card.children[2];
         foot.children[0].textContent = window.Store.orderTotal(order) + ' \u{1FA99}';
 
-        var action = foot.children[1];
+        var pay = foot.children[1];
+        pay.hidden = order.paid;
+        pay.textContent = '\u{1F4B3} ' + window.I18N.t('pay');
+        pay.onclick = function () {
+          window.Sound.terminal();
+          openPay(order.id);
+        };
+
+        var action = foot.children[2];
         action.hidden = !flow.next;
         if (flow.next) {
           action.textContent = window.I18N.t(flow.actionKey);
@@ -334,7 +355,7 @@
           };
         }
 
-        var del = foot.children[2];
+        var del = foot.children[3];
         del.setAttribute('aria-label', window.I18N.t('deleteOrder'));
         del.onclick = function () {
           window.Sound.remove();
@@ -342,6 +363,100 @@
         };
       }
     );
+  }
+
+  // --- Pay: receipt + card terminal -----------------------------------------
+
+  function openPay(orderId) {
+    if (!window.Store.getOrder(orderId)) return;
+    payingOrderId = orderId;
+    payPhase = window.Store.getOrder(orderId).paid ? 'done' : 'idle';
+    el.payModal.hidden = false;
+    renderPay();
+  }
+
+  function closePay() {
+    payTimers.forEach(clearTimeout);
+    payTimers = [];
+    payingOrderId = null;
+    payPhase = 'idle';
+    el.payModal.hidden = true;
+    el.terminalCard.classList.remove('is-tapping');
+  }
+
+  function renderPay() {
+    if (el.payModal.hidden) return;
+    var order = window.Store.getOrder(payingOrderId);
+    if (!order) { closePay(); return; }
+
+    var table = tableFor(order.table);
+    var total = window.Store.orderTotal(order);
+
+    el.receiptTicket.textContent = window.I18N.t('receiptFor') + ' ' + order.ticket;
+    el.receiptTable.textContent = (table ? table.emoji + ' ' : '') +
+      window.I18N.t('table') + ' ' + order.table;
+    el.receiptTotal.textContent = total;
+    el.receiptStamp.hidden = !order.paid;
+    el.terminalAmount.textContent = total + ' \u{1FA99}';
+
+    el.receiptLines.textContent = '';
+    order.items.forEach(function (line) {
+      var item = window.MENU.byId[line.id];
+      var li = node('li', 'receipt__line');
+      li.appendChild(node('span', 'receipt__line-emoji', item.emoji));
+      li.appendChild(node('span', 'receipt__line-name', window.I18N.name(item.name)));
+      li.appendChild(node('span', 'receipt__line-qty', '×' + line.qty));
+      li.appendChild(node('span', 'receipt__line-sum', item.price * line.qty));
+      el.receiptLines.appendChild(li);
+    });
+
+    el.terminalButtons.hidden = order.paid || payPhase === 'busy';
+    el.payClose.textContent = window.I18N.t(order.paid ? 'done' : 'payLater');
+
+    // While the terminal is "thinking", the flow owns the screen text.
+    if (payPhase === 'busy') return;
+
+    el.terminalMsg.classList.toggle('is-approved', !!order.paid);
+    el.terminalMsg.textContent = order.paid
+      ? window.I18N.t('approved') + ' ✓'
+      : window.I18N.t('howPay');
+  }
+
+  function payWith(method) {
+    var order = window.Store.getOrder(payingOrderId);
+    if (!order || order.paid || payPhase === 'busy') return;
+
+    payPhase = 'busy';
+    el.terminalButtons.hidden = true;
+    window.Sound.terminal();
+
+    if (method === 'cash') {
+      el.terminalMsg.classList.remove('is-approved');
+      el.terminalMsg.textContent = window.I18N.t('thanks');
+      window.Sound.coins();
+      payTimers.push(setTimeout(function () { settle('cash'); }, 700));
+      return;
+    }
+
+    el.terminalMsg.classList.remove('is-approved');
+    el.terminalMsg.textContent = window.I18N.t('tapCard');
+    el.terminalCard.classList.remove('is-tapping');
+    // Reading offsetWidth restarts the animation on a repeat payment.
+    void el.terminalCard.offsetWidth;
+    el.terminalCard.classList.add('is-tapping');
+
+    payTimers.push(setTimeout(function () {
+      el.terminalMsg.textContent = window.I18N.t('processing') + '…';
+    }, 900));
+    payTimers.push(setTimeout(function () { settle('card'); }, 1600));
+  }
+
+  function settle(method) {
+    payPhase = 'done';
+    el.terminalCard.classList.remove('is-tapping');
+    window.Sound.approved();
+    confetti(['\u{1FA99}', '✨', '\u{1F4B3}', '\u{1F389}']);
+    window.Store.markPaid(payingOrderId, method);   // re-renders through Store
   }
 
   function renderView() {
@@ -359,6 +474,7 @@
     renderFoods();
     renderTicket();
     renderKitchen();
+    renderPay();
     renderView();
   }
 
@@ -373,9 +489,9 @@
   function init() {
     el = {
       tables: $('tables'),
+      tableToggle: $('table-toggle'),
       cats: $('cats'),
       foods: $('foods'),
-      ticketTable: $('ticket-table'),
       ticketLines: $('ticket-lines'),
       ticketEmpty: $('ticket-empty'),
       ticketTotal: $('ticket-total'),
@@ -393,12 +509,31 @@
       soundGlyph: $('sound-glyph'),
       langToggle: $('lang-toggle'),
       langGlyph: $('lang-glyph'),
-      toast: $('toast'),
-      confetti: $('confetti')
+      confetti: $('confetti'),
+      payModal: $('pay-modal'),
+      payBackdrop: $('pay-backdrop'),
+      payClose: $('pay-close'),
+      payCard: $('pay-card'),
+      payCash: $('pay-cash'),
+      receiptTicket: $('receipt-ticket'),
+      receiptTable: $('receipt-table'),
+      receiptLines: $('receipt-lines'),
+      receiptTotal: $('receipt-total'),
+      receiptStamp: $('receipt-stamp'),
+      terminalAmount: $('terminal-amount'),
+      terminalMsg: $('terminal-msg'),
+      terminalCard: $('terminal-card'),
+      terminalButtons: $('terminal-buttons')
     };
 
     el.tabOrder.onclick = function () { showView('order'); };
     el.tabKitchen.onclick = function () { showView('kitchen'); };
+
+    el.tableToggle.onclick = function () {
+      tablesOpen = !tablesOpen;
+      window.Sound.click();
+      renderTables();
+    };
 
     el.soundToggle.onclick = function () {
       window.Store.toggleSound();
@@ -424,7 +559,7 @@
       if (!order) return;
       window.Sound.send();
       confetti(['\u{1F389}', '⭐', '\u{1F355}', '\u{1F366}', '\u{1F35F}']);
-      toast(window.I18N.t('sent') + ' #' + order.ticket);
+      openPay(order.id);
     };
 
     el.clearOrders.onclick = function () {
@@ -432,6 +567,15 @@
       window.Sound.remove();
       window.Store.clearOrders();
     };
+
+    el.payCard.onclick = function () { payWith('card'); };
+    el.payCash.onclick = function () { payWith('cash'); };
+    el.payClose.onclick = function () { window.Sound.click(); closePay(); };
+    el.payBackdrop.onclick = function () { closePay(); };
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !el.payModal.hidden) closePay();
+    });
 
     // Safari will not make a sound until audio starts inside a user gesture.
     document.addEventListener('pointerdown', function unlock() {

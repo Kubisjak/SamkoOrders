@@ -140,6 +140,9 @@ window.Store = (function () {
         table: state.table,
         items: state.draft,
         status: 'new',
+        // Paying is tracked separately from cooking: an order can be settled at
+        // the till while the kitchen is still working on it.
+        paid: false,
         createdAt: Date.now()
       };
       state.nextTicket += 1;
@@ -147,6 +150,20 @@ window.Store = (function () {
       state.draft = [];
       emit();
       return order;
+    },
+
+    getOrder: function (orderId) {
+      return state.orders.filter(function (order) { return order.id === orderId; })[0] || null;
+    },
+
+    markPaid: function (orderId, method) {
+      state.orders.forEach(function (order) {
+        if (order.id === orderId) {
+          order.paid = true;
+          order.paidWith = method;
+        }
+      });
+      emit();
     },
 
     setOrderStatus: function (orderId, status) {

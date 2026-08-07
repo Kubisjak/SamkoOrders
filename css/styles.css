@@ -143,32 +143,49 @@ button {
 
 /* --- Tables ---------------------------------------------------------------- */
 
-.tables {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: none;
+/* Deliberately understated. Most play sessions use one table, so this sits
+   folded away behind the chip in the ticket header. */
+.tablepick {
+  margin-left: auto;
+  flex: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 800;
+  transition: transform .12s ease;
 }
 
-.tables::-webkit-scrollbar { display: none; }
+.tablepick:active { transform: scale(.94); }
+.tablepick[aria-expanded="true"] { background: #fff2e2; color: var(--accent-dark); }
+
+.tables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: var(--bg);
+  border-radius: 16px;
+}
 
 .table-btn {
   flex: none;
-  min-width: 62px;
-  height: 58px;
+  min-width: 52px;
+  height: 48px;
   border: 3px solid transparent;
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--panel);
   box-shadow: var(--shadow-sm);
   display: grid;
   place-items: center;
-  gap: 0;
   transition: transform .12s ease, border-color .12s ease;
 }
 
-.table-btn__emoji { font-size: 24px; line-height: 1; }
-.table-btn__num { font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+.table-btn__emoji { font-size: 20px; line-height: 1; }
+.table-btn__num { font-size: 11px; font-weight: 800; color: var(--ink-soft); }
 .table-btn:active { transform: scale(.94); }
 .table-btn.is-active {
   border-color: var(--accent);
@@ -178,34 +195,38 @@ button {
 
 /* --- Category tabs --------------------------------------------------------- */
 
+/* A fixed grid rather than a scrolling strip: the categories are the control
+   Samko uses most, so they need to be big and, more importantly, always in the
+   same place. Nothing scrolls out of reach and muscle memory can build up. */
 .cats {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
 }
 
-.cats::-webkit-scrollbar { display: none; }
-
 .cat {
-  flex: none;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border: 0;
-  border-radius: 999px;
+  justify-content: center;
+  gap: 6px;
+  min-height: 104px;
+  padding: 12px 8px;
+  border: 4px solid transparent;
+  border-radius: 22px;
   background: var(--panel);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
   font-weight: 800;
-  font-size: 15px;
+  font-size: 17px;
+  line-height: 1.1;
+  text-align: center;
   color: var(--ink-soft);
   transition: transform .12s ease;
 }
 
-.cat__emoji { font-size: 20px; }
+.cat__emoji { font-size: 44px; line-height: 1; }
 .cat:active { transform: scale(.95); }
-.cat.is-active { color: #fff; }
+.cat.is-active { color: #fff; transform: translateY(-2px); }
 .cat.is-active.cat--blue { background: var(--blue); }
 .cat.is-active.cat--red { background: var(--red); }
 .cat.is-active.cat--green { background: var(--green); }
@@ -665,28 +686,209 @@ button {
   animation: pop .22s ease;
 }
 
-/* --- Toast + confetti ------------------------------------------------------ */
+/* --- Pay: receipt + card terminal ------------------------------------------ */
 
-.toast {
+.modal {
   position: fixed;
-  left: 50%;
-  bottom: calc(96px + var(--safe-bottom));
-  transform: translateX(-50%);
-  background: var(--ink);
-  color: #fff;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(61, 43, 31, .55);
+  animation: fade-in .2s ease;
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.modal__panel {
+  position: relative;
+  width: min(380px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: receipt-print .45s cubic-bezier(.2, .8, .3, 1);
+}
+
+/* The receipt slides up out of the terminal like a printed slip. */
+@keyframes receipt-print {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: none; }
+}
+
+.receipt {
+  position: relative;
+  background: #fffdf6;
+  padding: 18px 18px 28px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: #4a3527;
+  /* Zigzag the bottom edge so it reads as torn-off till roll. Browsers without
+     mask support just get a clean rectangle, which is fine. */
+  --zig: 12px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--zig)) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 22px var(--zig) repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--zig)) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 22px var(--zig) repeat-x;
+}
+
+.receipt__head { text-align: center; margin-bottom: 12px; }
+.receipt__logo { font-size: 30px; line-height: 1; }
+.receipt__name { font-weight: 800; font-size: 15px; margin-top: 4px; letter-spacing: .5px; }
+.receipt__meta { font-size: 12px; opacity: .65; margin-top: 2px; }
+
+.receipt__lines {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0;
+  border-top: 2px dashed #ded0bb;
+  border-bottom: 2px dashed #ded0bb;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13px;
+}
+
+.receipt__line { display: flex; align-items: center; gap: 8px; }
+.receipt__line-emoji { font-size: 17px; }
+.receipt__line-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.receipt__line-qty { opacity: .6; }
+.receipt__line-sum { font-weight: 800; min-width: 34px; text-align: right; }
+
+.receipt__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 12px;
   font-weight: 800;
-  padding: 14px 22px;
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(61, 43, 31, .3);
-  z-index: 20;
-  animation: toast-in .25s ease;
+  font-size: 15px;
+}
+
+.receipt__total strong { font-size: 21px; }
+
+/* Rubber stamp, slapped on at an angle once the payment goes through. */
+.receipt__stamp {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-16deg);
+  border: 5px solid var(--send-dark);
+  color: var(--send-dark);
+  border-radius: 12px;
+  padding: 6px 18px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: .85;
+  animation: stamp .4s cubic-bezier(.2, 1.4, .4, 1);
   pointer-events: none;
 }
 
-@keyframes toast-in {
-  from { opacity: 0; transform: translate(-50%, 14px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+@keyframes stamp {
+  0% { transform: translate(-50%, -50%) rotate(-16deg) scale(2.6); opacity: 0; }
+  60% { opacity: .95; }
+  100% { transform: translate(-50%, -50%) rotate(-16deg) scale(1); opacity: .85; }
 }
+
+.terminal {
+  background: linear-gradient(180deg, #4a4a52, #33333a);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.terminal__screen {
+  background: #123d24;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: #6dffa8;
+  text-shadow: 0 0 8px rgba(109, 255, 168, .5);
+  min-height: 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.terminal__amount { font-size: 27px; font-weight: 800; letter-spacing: 1px; }
+.terminal__msg { font-size: 13px; opacity: .9; min-height: 17px; }
+.terminal__msg.is-approved { font-size: 19px; font-weight: 800; letter-spacing: 2px; }
+
+/* The card hops toward the reader while the payment is "processing". */
+.terminal__card {
+  font-size: 34px;
+  text-align: center;
+  height: 0;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.terminal__card.is-tapping {
+  opacity: 1;
+  animation: tap-card .9s ease-in-out;
+}
+
+@keyframes tap-card {
+  0% { transform: translateX(-70px) rotate(-12deg); }
+  45% { transform: translateX(0) rotate(0deg); }
+  60% { transform: translateX(0) scale(1.12); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.terminal__buttons { display: flex; gap: 10px; }
+
+.btn--pay {
+  flex: 1;
+  background: linear-gradient(180deg, #5ea9ff, #3d7fd4);
+  color: #fff;
+  box-shadow: 0 4px 0 #2e63a8;
+}
+
+.btn--pay.btn--cash {
+  background: linear-gradient(180deg, var(--send), var(--send-dark));
+  box-shadow: 0 4px 0 #1d8a46;
+}
+
+.btn--wide { width: 100%; background: rgba(255, 255, 255, .9); }
+
+/* Paid orders carry this chip in the kitchen. */
+.order__paid {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #e6f9ed;
+  color: var(--send-dark);
+  white-space: nowrap;
+}
+
+.order__pay {
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  background: #3d7fd4;
+  transition: transform .1s ease;
+}
+
+.order__pay:active { transform: scale(.95); }
 
 .confetti {
   position: fixed;
@@ -723,12 +925,18 @@ button {
   .foods {
     grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
   }
+
+  .cats { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+  .cat { min-height: 88px; font-size: 15px; }
+  .cat__emoji { font-size: 36px; }
 }
 
 @media (max-height: 560px) {
   /* Landscape phone: give the grid every pixel it can get. */
   .ticket { max-height: 50vh; }
   .food__name { display: none; }
+  .cat { min-height: 66px; font-size: 13px; }
+  .cat__emoji { font-size: 28px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
