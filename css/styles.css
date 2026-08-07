@@ -334,6 +334,16 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+
+/* In a narrow ticket the heading has to give way, or it shoves the table chip
+   off the edge of the screen. */
+.ticket__title [data-i18n] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ticket__table {
@@ -931,12 +941,77 @@ button {
   .cat__emoji { font-size: 36px; }
 }
 
-@media (max-height: 560px) {
-  /* Landscape phone: give the grid every pixel it can get. */
-  .ticket { max-height: 50vh; }
-  .food__name { display: none; }
-  .cat { min-height: 66px; font-size: 13px; }
+/* Phones. The food grid is the whole point of the screen, so everything else
+   gets squeezed before it does: categories stay on ONE row (wrapping to two
+   cost 208px and collapsed the grid to nothing), and the ticket gives up its
+   empty-state hint and pads down hard. */
+@media (max-width: 620px) {
+  .view {
+    padding: 10px calc(10px + var(--safe-right)) 10px calc(10px + var(--safe-left));
+    gap: 10px;
+  }
+
+  .view--order { grid-template-rows: minmax(180px, 1fr) auto; }
+
+  .cats { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+  .cat {
+    min-height: 72px;
+    padding: 8px 4px;
+    gap: 2px;
+    border-width: 3px;
+    border-radius: 16px;
+    font-size: 11px;
+  }
+
   .cat__emoji { font-size: 28px; }
+
+  .foods {
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  }
+
+  .food__name { font-size: 11px; }
+  .food__price { font-size: 11px; }
+
+  .ticket { padding: 10px; max-height: 38vh; }
+  .ticket__title { font-size: 15px; margin-bottom: 6px; }
+  /* The food is right there on screen; the hint only steals height. */
+  .ticket__empty { display: none; }
+  .ticket__lines { max-height: 20vh; }
+  .ticket__footer { margin-top: 6px; padding-top: 6px; gap: 6px; }
+  .ticket__total strong { font-size: 18px; }
+
+  .btn { padding: 11px 12px; font-size: 14px; }
+  .line { padding: 6px 8px; }
+  .line__emoji { font-size: 22px; }
+  .step { width: 30px; height: 30px; font-size: 17px; }
+
+  .orders { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-height: 560px) {
+  /* Landscape phone: give the grid every pixel it can get. Square tiles would
+     be as tall as the whole grid area here, so they become short and wide. */
+  .food__name { display: none; }
+  .cat { min-height: 60px; font-size: 11px; }
+  .cat__emoji { font-size: 26px; }
+
+  .foods { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }
+  .food { aspect-ratio: auto; height: 86px; }
+  .food__emoji { font-size: 34px; }
+}
+
+/* Short but wide — a phone on its side. Stacking wastes the width, so put the
+   ticket back beside the menu and let the grid keep the full height. */
+@media (max-width: 900px) and (min-width: 620px) and (max-height: 560px) {
+  .view--order {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .ticket { max-height: none; }
+  .ticket__empty { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
