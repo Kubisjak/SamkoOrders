@@ -1,0 +1,5 @@
+# The app itself needs no tooling; these only show up if you poke at it locally.
+node_modules/
+package-lock.json
+.DS_Store
+__pycache__/

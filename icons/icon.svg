@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="A smiling plate">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9a4d"/>
+      <stop offset="1" stop-color="#ef6c1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="171.5" fill="#ffffff"/>
+  <circle cx="256" cy="256" r="130.5" fill="#fff3e3"/>
+  <circle cx="215" cy="225" r="19.5" fill="#3d2b1f"/>
+  <circle cx="297" cy="225" r="19.5" fill="#3d2b1f"/>
+  <path d="M187 279a70 70 0 0 0 138 0h-20.5a49.5 49.5 0 0 1-97 0z" fill="#3d2b1f"/>
+</svg>

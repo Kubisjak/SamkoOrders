@@ -1,0 +1,17 @@
+{
+  "name": "Samkova reštaurácia",
+  "short_name": "Samko",
+  "description": "A play-restaurant order pad for kids: tap the food, send the order, cook it in the kitchen.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff6e9",
+  "theme_color": "#ff8a3d",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
