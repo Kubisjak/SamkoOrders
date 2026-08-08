@@ -594,6 +594,12 @@
       document.removeEventListener('pointerdown', unlock);
     }, { once: true });
 
+    // Coming back from the home screen or a locked iPad drops the audio
+    // session, so claim it again on the way in.
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) window.Sound.resumeSession();
+    });
+
     window.Store.subscribe(render);
 
     if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {

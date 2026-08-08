@@ -13,6 +13,74 @@ window.Sound = (function () {
   var ctx = null;
   var master = null;
   var noiseBuf = null;
+  var keeper = null;
+
+  /**
+   * iPadOS 13+ reports itself as a Mac, so touch support is the giveaway.
+   */
+  function isAppleTouch() {
+    var ua = navigator.userAgent;
+    return /iP(hone|ad|od)/.test(ua) ||
+      (/Mac/.test(ua) && navigator.maxTouchPoints > 1);
+  }
+
+  /** A few hundredths of a second of silence, built without shipping a file. */
+  function silentWavUrl() {
+    var rate = 8000;
+    var samples = 400;
+    var buf = new ArrayBuffer(44 + samples);
+    var view = new DataView(buf);
+
+    function tag(offset, text) {
+      for (var i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
+    }
+
+    tag(0, 'RIFF');
+    view.setUint32(4, 36 + samples, true);
+    tag(8, 'WAVE');
+    tag(12, 'fmt ');
+    view.setUint32(16, 16, true);      // PCM header length
+    view.setUint16(20, 1, true);       // format: PCM
+    view.setUint16(22, 1, true);       // mono
+    view.setUint32(24, rate, true);
+    view.setUint32(28, rate, true);    // byte rate
+    view.setUint16(32, 1, true);       // block align
+    view.setUint16(34, 8, true);       // bits per sample
+    tag(36, 'data');
+    view.setUint32(40, samples, true);
+    for (var i = 0; i < samples; i++) view.setUint8(44 + i, 128);  // 128 = silence
+
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  }
+
+  /**
+   * On iOS the hardware ring/silent switch mutes Web Audio, which makes the app
+   * look broken to anyone whose phone happens to be on silent. A playing
+   * <audio> element moves the page to the "playback" audio session, which the
+   * switch does not silence, so a looping scrap of silence keeps the effects
+   * audible. The in-app speaker button is still the way to turn sound off.
+   */
+  function holdAudioSession() {
+    if (!isAppleTouch()) return;
+    try {
+      if (!keeper) {
+        keeper = document.createElement('audio');
+        keeper.src = silentWavUrl();
+        keeper.loop = true;
+        keeper.setAttribute('playsinline', '');
+        keeper.setAttribute('aria-hidden', 'true');
+        // Has to be in the document: Safari will not reliably play a media
+        // element that is only held in a variable. It renders nothing without
+        // `controls`, and `display: none` would stop playback, so it just sits
+        // there invisibly.
+        document.body.appendChild(keeper);
+      }
+      var playing = keeper.play();
+      if (playing && playing.catch) playing.catch(function () {});
+    } catch (err) {
+      console.warn('Could not hold the audio session.', err);
+    }
+  }
 
   function context() {
     if (!ctx) {
@@ -207,6 +275,13 @@ window.Sound = (function () {
     /** Warm the audio context up during the first user gesture. */
     unlock: function () {
       context();
+      holdAudioSession();
+    },
+
+    /** iOS drops the session when the app is backgrounded; take it back. */
+    resumeSession: function () {
+      context();
+      holdAudioSession();
     }
   };
 })();
