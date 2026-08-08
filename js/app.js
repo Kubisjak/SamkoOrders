@@ -85,6 +85,12 @@
     return window.MENU.tables.filter(function (t) { return t.id === id; })[0];
   }
 
+  /** How many of this item are already on the ticket — drives the rising pitch. */
+  function draftQty(itemId) {
+    var line = window.Store.getState().draft.filter(function (l) { return l.id === itemId; })[0];
+    return line ? line.qty : 0;
+  }
+
   // --- Rendering ------------------------------------------------------------
 
   function renderStaticStrings() {
@@ -189,7 +195,7 @@
         button.appendChild(node('span', 'food__name', window.I18N.name(item.name)));
         button.appendChild(node('span', 'food__price', item.price + ' \u{1FA99}'));
         button.onclick = function () {
-          window.Sound.tap();
+          window.Sound.tap(draftQty(item.id));
           window.Store.addToDraft(item.id);
         };
         el.foods.appendChild(button);
@@ -260,7 +266,7 @@
           window.Store.removeFromDraft(key);
         };
         stepper.children[2].onclick = function () {
-          window.Sound.tap();
+          window.Sound.tap(draftQty(key));
           window.Store.addToDraft(key);
         };
       }
@@ -445,8 +451,13 @@
     void el.terminalCard.offsetWidth;
     el.terminalCard.classList.add('is-tapping');
 
+    // The clack lands at 45% of the 0.9s animation, where the card reaches the
+    // reader — the sound has to hit the picture, not the button press.
+    payTimers.push(setTimeout(function () { window.Sound.cardClick(); }, 410));
+
     payTimers.push(setTimeout(function () {
       el.terminalMsg.textContent = window.I18N.t('processing') + '…';
+      window.Sound.terminal();
     }, 900));
     payTimers.push(setTimeout(function () { settle('card'); }, 1600));
   }
