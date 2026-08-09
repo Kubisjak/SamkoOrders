@@ -65,6 +65,115 @@
     });
   }
 
+  // --- Drawing the ice cream ------------------------------------------------
+
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function svg(tag, attrs) {
+    var element = document.createElementNS(SVG_NS, tag);
+    Object.keys(attrs || {}).forEach(function (name) {
+      element.setAttribute(name, attrs[name]);
+    });
+    return element;
+  }
+
+  /** Where the bottom scoop sits, and so the whole stack, per vessel. */
+  var SCOOP_BASE = { cone: 64, waffle: 62, cup: 67 };
+  var SCOOP_GAP = 17;
+  var SCOOP_R = 19;
+
+  function drawVessel(root, vesselId) {
+    if (vesselId === 'cup') {
+      root.appendChild(svg('path', {
+        d: 'M31 72 H69 L63 122 Q50 128 37 122 Z',
+        fill: '#fffaf0', stroke: '#e3d5bd', 'stroke-width': 2
+      }));
+      root.appendChild(svg('rect', {
+        x: 28, y: 66, width: 44, height: 9, rx: 4.5, fill: '#f2e6d2'
+      }));
+      return;
+    }
+
+    var big = vesselId === 'waffle';
+    var top = big ? 70 : 72;
+    var halfWidth = big ? 26 : 20;
+    var tip = big ? 130 : 126;
+
+    root.appendChild(svg('polygon', {
+      points: (50 - halfWidth) + ' ' + top + ' ' + (50 + halfWidth) + ' ' + top + ' 50 ' + tip,
+      fill: big ? '#d59453' : '#e3aa64'
+    }));
+
+    // Waffle crosshatch, clipped to the cone by simply keeping it short.
+    for (var i = 1; i <= 3; i++) {
+      var y = top + i * ((tip - top) / 4.5);
+      var w = halfWidth * (1 - (y - top) / (tip - top)) * 0.92;
+      root.appendChild(svg('line', {
+        x1: 50 - w, y1: y, x2: 50 + w, y2: y,
+        stroke: 'rgba(120, 72, 26, .35)', 'stroke-width': 2, 'stroke-linecap': 'round'
+      }));
+    }
+  }
+
+  /**
+   * The cone (or cup) with its scoops stacked up. Used big on the counter and
+   * shrunk down on the ticket, the kitchen cards and anywhere else the order
+   * shows up, so one drawing serves the whole app.
+   */
+  function coneSvg(build, width, onScoopClick) {
+    var root = svg('svg', {
+      viewBox: '0 0 100 134',
+      width: width,
+      height: Math.round(width * 1.34),
+      class: 'cone',
+      role: 'img'
+    });
+
+    drawVessel(root, build.vessel);
+
+    var base = SCOOP_BASE[build.vessel] || SCOOP_BASE.cone;
+
+    if (build.scoops.length === 0) {
+      // A dashed ghost showing where the first scoop would land.
+      root.appendChild(svg('circle', {
+        cx: 50, cy: base, r: SCOOP_R - 2,
+        fill: 'none', stroke: 'rgba(138, 116, 97, .45)',
+        'stroke-width': 2.5, 'stroke-dasharray': '6 6'
+      }));
+      return root;
+    }
+
+    build.scoops.forEach(function (flavourId, index) {
+      var flavour = window.MENU.flavourById[flavourId];
+      var cy = base - index * SCOOP_GAP;
+      var group = svg('g', { class: 'cone__scoop' });
+
+      // Underside first, then the body slightly raised: cheap, readable depth.
+      group.appendChild(svg('circle', { cx: 50, cy: cy, r: SCOOP_R, fill: flavour.shade }));
+      group.appendChild(svg('circle', { cx: 50, cy: cy - 2.5, r: SCOOP_R - 1.5, fill: flavour.colour }));
+      group.appendChild(svg('ellipse', {
+        cx: 42, cy: cy - 9, rx: 5.5, ry: 3.6,
+        fill: '#fff', opacity: 0.45, transform: 'rotate(-25 42 ' + (cy - 9) + ')'
+      }));
+
+      if (onScoopClick) {
+        group.setAttribute('tabindex', '0');
+        group.style.cursor = 'pointer';
+        group.addEventListener('click', function () { onScoopClick(index); });
+      }
+      root.appendChild(group);
+    });
+
+    return root;
+  }
+
+  /** Small non-interactive version for order lines. */
+  function conePreview(build, width) {
+    var wrap = node('span', 'cone-mini');
+    wrap.appendChild(coneSvg(build, width || 26));
+    return wrap;
+  }
+
   function confetti(emojis) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     for (var i = 0; i < 26; i++) {
@@ -178,10 +287,97 @@
     );
   }
 
+  function renderBuilder() {
+    var cat = window.MENU.categories.filter(function (c) { return c.id === currentCategoryId; })[0];
+    var showing = !!cat.builder;
+
+    el.builder.hidden = !showing;
+    el.foods.hidden = showing;
+    if (!showing) return;
+
+    var build = window.Store.getBuild();
+    var ice = window.MENU.iceCream;
+
+    // The cone itself. Tapping a scoop takes it back off.
+    el.builderCone.textContent = '';
+    el.builderCone.appendChild(coneSvg(build, 132, function (index) {
+      window.Sound.remove();
+      window.Store.removeScoop(index);
+    }));
+
+    el.builderUndo.hidden = build.scoops.length === 0;
+    el.builderCount.textContent = build.scoops.length + '/' + ice.maxScoops + ' ' +
+      window.I18N.t('scoops');
+    el.builderPrice.textContent = window.Store.buildPrice() + ' \u{1FA99}';
+    el.builderAdd.disabled = build.scoops.length === 0;
+
+    reconcile(
+      el.vessels,
+      ice.vessels.map(function (v) { return v.id; }),
+      function () {
+        var button = node('button', 'vessel');
+        button.type = 'button';
+        button.setAttribute('role', 'radio');
+        button.appendChild(node('span', 'vessel__emoji'));
+        button.appendChild(node('span', 'vessel__name'));
+        return button;
+      },
+      function (button, key) {
+        var vessel = window.MENU.vesselById[key];
+        var active = build.vessel === key;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-checked', String(active));
+        button.children[0].textContent = vessel.emoji;
+        button.children[1].textContent = window.I18N.name(vessel.name);
+        button.onclick = function () {
+          window.Sound.click();
+          window.Store.setVessel(key);
+        };
+      }
+    );
+
+    reconcile(
+      el.flavours,
+      ice.flavours.map(function (f) { return f.id; }),
+      function () {
+        var button = node('button', 'flavour');
+        button.type = 'button';
+        var disc = node('span', 'flavour__disc');
+        disc.appendChild(node('span', 'flavour__emoji'));
+        button.appendChild(disc);
+        button.appendChild(node('span', 'flavour__name'));
+        return button;
+      },
+      function (button, key) {
+        var flavour = window.MENU.flavourById[key];
+        var scoopsOf = build.scoops.filter(function (id) { return id === key; }).length;
+
+        button.children[0].style.background = flavour.colour;
+        button.children[0].style.borderColor = flavour.shade;
+        button.children[0].children[0].textContent = flavour.emoji;
+        button.children[1].textContent = window.I18N.name(flavour.name);
+        button.classList.toggle('is-chosen', scoopsOf > 0);
+        button.setAttribute('aria-label', window.I18N.name(flavour.name));
+
+        button.onclick = function () {
+          var added = window.Store.addScoop(key);
+          if (added) {
+            window.Sound.scoop(window.Store.getBuild().scoops.length - 1);
+          } else {
+            window.Sound.remove();
+            el.builderCount.textContent = window.I18N.t('coneFull');
+          }
+        };
+      }
+    );
+  }
+
   function renderFoods() {
     var state = window.Store.getState();
     var cat = window.MENU.categories.filter(function (c) { return c.id === currentCategoryId; })[0];
     var gridKey = cat.id + '/' + state.language;
+
+    if (cat.builder) return;
 
     if (renderedGrid !== gridKey) {
       renderedGrid = gridKey;
@@ -229,7 +425,7 @@
 
     reconcile(
       el.ticketLines,
-      state.draft.map(function (line) { return line.id; }),
+      state.draft.map(function (line) { return line.key; }),
       function () {
         var li = node('li', 'line');
         li.appendChild(node('span', 'line__emoji'));
@@ -251,23 +447,37 @@
         return li;
       },
       function (li, key) {
-        var item = window.MENU.byId[key];
-        var line = state.draft.filter(function (l) { return l.id === key; })[0];
-        li.children[0].textContent = item.emoji;
-        li.children[1].children[0].textContent = window.I18N.name(item.name);
-        li.children[1].children[1].textContent = item.price * line.qty + ' \u{1FA99}';
+        var line = state.draft.filter(function (l) { return l.key === key; })[0];
+        var name = window.I18N.name(window.MENU.lineName(line));
+
+        // A built cone shows its actual scoops rather than a generic emoji.
+        li.children[0].textContent = '';
+        if (line.build) {
+          li.children[0].appendChild(conePreview(line.build, 24));
+        } else {
+          li.children[0].textContent = window.MENU.lineEmoji(line);
+        }
+
+        li.children[1].children[0].textContent = name;
+        li.children[1].children[1].textContent =
+          window.MENU.linePrice(line) * line.qty + ' \u{1FA99}';
 
         var stepper = li.children[2];
         stepper.children[1].textContent = line.qty;
-        stepper.children[0].setAttribute('aria-label', '− ' + window.I18N.name(item.name));
-        stepper.children[2].setAttribute('aria-label', '+ ' + window.I18N.name(item.name));
+        stepper.children[0].setAttribute('aria-label', '− ' + name);
+        stepper.children[2].setAttribute('aria-label', '+ ' + name);
         stepper.children[0].onclick = function () {
           window.Sound.remove();
           window.Store.removeFromDraft(key);
         };
+        // Built cones are re-added through the store so the build travels too.
         stepper.children[2].onclick = function () {
-          window.Sound.tap(draftQty(key));
-          window.Store.addToDraft(key);
+          window.Sound.tap(line.qty);
+          if (line.build) {
+            window.Store.addBuiltLine(line.build);
+          } else {
+            window.Store.addToDraft(key);
+          }
         };
       }
     );
@@ -327,11 +537,15 @@
         var items = card.children[1];
         items.textContent = '';
         order.items.forEach(function (line) {
-          var item = window.MENU.byId[line.id];
           var li = node('li', 'order__item');
-          li.appendChild(node('span', 'order__item-emoji', item.emoji));
+          if (line.build) {
+            // The kitchen needs to see which scoops, not just "an ice cream".
+            li.appendChild(conePreview(line.build, 26));
+          } else {
+            li.appendChild(node('span', 'order__item-emoji', window.MENU.lineEmoji(line)));
+          }
           li.appendChild(node('span', null, '×' + line.qty));
-          li.title = window.I18N.name(item.name);
+          li.title = window.I18N.name(window.MENU.lineName(line));
           items.appendChild(li);
         });
 
@@ -407,12 +621,11 @@
 
     el.receiptLines.textContent = '';
     order.items.forEach(function (line) {
-      var item = window.MENU.byId[line.id];
       var li = node('li', 'receipt__line');
-      li.appendChild(node('span', 'receipt__line-emoji', item.emoji));
-      li.appendChild(node('span', 'receipt__line-name', window.I18N.name(item.name)));
+      li.appendChild(node('span', 'receipt__line-emoji', window.MENU.lineEmoji(line)));
+      li.appendChild(node('span', 'receipt__line-name', window.I18N.name(window.MENU.lineName(line))));
       li.appendChild(node('span', 'receipt__line-qty', '×' + line.qty));
-      li.appendChild(node('span', 'receipt__line-sum', item.price * line.qty));
+      li.appendChild(node('span', 'receipt__line-sum', window.MENU.linePrice(line) * line.qty));
       el.receiptLines.appendChild(li);
     });
 
@@ -482,6 +695,7 @@
     renderToggles();
     renderTables();
     renderCategories();
+    renderBuilder();
     renderFoods();
     renderTicket();
     renderKitchen();
@@ -503,6 +717,14 @@
       tableToggle: $('table-toggle'),
       cats: $('cats'),
       foods: $('foods'),
+      builder: $('builder'),
+      builderCone: $('builder-cone'),
+      builderUndo: $('builder-undo'),
+      builderCount: $('builder-count'),
+      builderPrice: $('builder-price'),
+      builderAdd: $('builder-add'),
+      vessels: $('vessels'),
+      flavours: $('flavours'),
       ticketLines: $('ticket-lines'),
       ticketEmpty: $('ticket-empty'),
       ticketTotal: $('ticket-total'),
@@ -558,6 +780,18 @@
       renderedGrid = null;
       window.Sound.click();
       render();
+    };
+
+    el.builderUndo.onclick = function () {
+      window.Sound.remove();
+      window.Store.removeScoop();
+    };
+
+    el.builderAdd.onclick = function () {
+      var build = window.Store.addBuildToDraft();
+      if (!build) return;
+      window.Sound.send();
+      confetti(['\u{1F366}', '✨', '\u{1F368}']);
     };
 
     el.clearDraft.onclick = function () {

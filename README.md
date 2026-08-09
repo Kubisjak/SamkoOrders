@@ -21,6 +21,28 @@ of orders still outstanding.
 Two people can play at once on one iPad by passing it back and forth between the
 tabs — one takes orders, one cooks.
 
+### The ice cream counter
+
+The **Zmrzlina** tab is not a grid of items but a little counter. Pick a vessel
+(cone, big cone or cup), then tap flavours to stack up to three scoops. The cone
+on the left is drawn live from the actual choices — a scoop of Šmolková really
+is Smurf blue — and tapping a scoop takes it back off. The finished cone goes
+onto the ticket as a single line and keeps its drawing all the way through the
+kitchen and onto the receipt.
+
+Identical cones stack into one line; different ones stay separate.
+
+Flavours live in `js/menu.js` under `MENU.iceCream`, each with an icon and the
+two colours that make a scoop look round:
+
+```js
+{ id: 'mango', emoji: '🥭', name: { sk: 'Mangová', en: 'Mango' },
+  colour: '#ffcb61', shade: '#e8a733' }
+```
+
+`colour` is the body of the scoop, `shade` its underside. Vessels and the
+three-scoop limit are configured in the same block.
+
 ### Other bits
 
 - 🇸🇰 / 🇬🇧 button in the corner switches between Slovak and English.
@@ -79,7 +101,7 @@ entries to change how many tables the restaurant has.
 | --- | --- |
 | `index.html` | Page skeleton — both views and the tab bar |
 | `css/styles.css` | All styling, including the iPad-specific touch handling |
-| `js/menu.js` | The menu and table data |
+| `js/menu.js` | The menu, tables, ice cream flavours, and order-line helpers |
 | `js/store.js` | State plus its mirror in `localStorage` |
 | `js/i18n.js` | Slovak and English interface strings |
 | `js/sound.js` | WebAudio sound effects |

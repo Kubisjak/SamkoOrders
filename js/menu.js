@@ -55,11 +55,13 @@ window.MENU = {
     },
     {
       id: 'sweets',
-      emoji: '\u{1F366}',
+      // Not the ice cream cone any more — that belongs to the counter below,
+      // and on phones (where category labels are hidden) two identical emoji
+      // would be indistinguishable.
+      emoji: '\u{1F36C}',
       name: { sk: 'Sladkosti', en: 'Sweets' },
       color: 'pink',
       items: [
-        { id: 'icecream', emoji: '\u{1F366}', name: { sk: 'Zmrzlina', en: 'Ice cream' }, price: 4 },
         { id: 'cake', emoji: '\u{1F370}', name: { sk: 'Torta', en: 'Cake' }, price: 5 },
         { id: 'donut', emoji: '\u{1F369}', name: { sk: 'Šiška', en: 'Donut' }, price: 3 },
         { id: 'cookie', emoji: '\u{1F36A}', name: { sk: 'Sušienka', en: 'Cookie' }, price: 2 },
@@ -68,6 +70,17 @@ window.MENU = {
         { id: 'strawberry', emoji: '\u{1F353}', name: { sk: 'Jahody', en: 'Strawberries' }, price: 4 },
         { id: 'watermelon', emoji: '\u{1F349}', name: { sk: 'Melón', en: 'Watermelon' }, price: 3 }
       ]
+    },
+    {
+      // No item list: this category opens the ice cream builder instead of a
+      // grid. Kept last so the other four never move — Samko navigates by
+      // position as much as by picture.
+      id: 'icecream',
+      emoji: '\u{1F366}',
+      name: { sk: 'Zmrzlina', en: 'Ice cream' },
+      color: 'cream',
+      builder: true,
+      items: []
     }
   ],
 
@@ -82,6 +95,52 @@ window.MENU = {
   ]
 };
 
+/**
+ * The ice cream counter. Flavours carry a colour as well as an icon, because
+ * the whole point is that a scoop of pistachio is recognisably green in the
+ * cone being built on screen.
+ *
+ * `colour` is the body of the scoop and `shade` its underside — the pair is
+ * what stops the stack looking like flat circles.
+ */
+window.MENU.iceCream = {
+  maxScoops: 3,
+  scoopPrice: 2,
+
+  vessels: [
+    { id: 'cone', emoji: '\u{1F366}', name: { sk: 'Kornútok', en: 'Cone' }, price: 1 },
+    { id: 'waffle', emoji: '\u{1F9C7}', name: { sk: 'Veľký kornútok', en: 'Big cone' }, price: 2 },
+    { id: 'cup', emoji: '\u{1F963}', name: { sk: 'Pohár', en: 'Cup' }, price: 1 }
+  ],
+
+  flavours: [
+    { id: 'vanilla', emoji: '\u{1F33C}', name: { sk: 'Vanilková', en: 'Vanilla' }, colour: '#f7e7b6', shade: '#e3cd8d' },
+    { id: 'chocolate', emoji: '\u{1F36B}', name: { sk: 'Čokoládová', en: 'Chocolate' }, colour: '#7b4a2d', shade: '#5d3520' },
+    { id: 'pistachio', emoji: '\u{1F95C}', name: { sk: 'Pistáciová', en: 'Pistachio' }, colour: '#aed894', shade: '#87b76c' },
+    { id: 'rice', emoji: '\u{1F35A}', name: { sk: 'Ryžová', en: 'Rice' }, colour: '#fdf7ea', shade: '#e4d9c2' },
+    // Šmolková — named after Šmolkovia (Šmoulové, the Smurfs), and so bright
+    // blue. Kept in the adjective form the other flavours use.
+    { id: 'smolkova', emoji: '\u{1F499}', name: { sk: 'Šmolková', en: 'Smurf' }, colour: '#4fb3f0', shade: '#2b87c9' },
+    { id: 'strawberry', emoji: '\u{1F353}', name: { sk: 'Jahodová', en: 'Strawberry' }, colour: '#f7a8ba', shade: '#e07d95' },
+    { id: 'blueberry', emoji: '\u{1FAD0}', name: { sk: 'Čučoriedková', en: 'Blueberry' }, colour: '#9b86d4', shade: '#7963b3' },
+    { id: 'lemon', emoji: '\u{1F34B}', name: { sk: 'Citrónová', en: 'Lemon' }, colour: '#fbeb8f', shade: '#e6d158' },
+    { id: 'mint', emoji: '\u{1F33F}', name: { sk: 'Mätová', en: 'Mint' }, colour: '#a6e3ce', shade: '#7cc7ac' },
+    { id: 'caramel', emoji: '\u{1F36E}', name: { sk: 'Karamelová', en: 'Caramel' }, colour: '#dda45f', shade: '#bd8340' },
+    { id: 'cookies', emoji: '\u{1F36A}', name: { sk: 'Oreo', en: 'Cookies & cream' }, colour: '#e9e3d8', shade: '#b9b0a2' },
+    { id: 'mango', emoji: '\u{1F96D}', name: { sk: 'Mangová', en: 'Mango' }, colour: '#ffcb61', shade: '#e8a733' }
+  ]
+};
+
+window.MENU.flavourById = window.MENU.iceCream.flavours.reduce(function (acc, f) {
+  acc[f.id] = f;
+  return acc;
+}, {});
+
+window.MENU.vesselById = window.MENU.iceCream.vessels.reduce(function (acc, v) {
+  acc[v.id] = v;
+  return acc;
+}, {});
+
 /** Flat id -> item lookup, so a saved order only has to store ids and quantities. */
 window.MENU.byId = window.MENU.categories.reduce(function (acc, cat) {
   cat.items.forEach(function (item) {
@@ -89,3 +148,63 @@ window.MENU.byId = window.MENU.categories.reduce(function (acc, cat) {
   });
   return acc;
 }, {});
+
+/* --- Order lines ----------------------------------------------------------
+   A line is either a plain menu item or a built ice cream carrying a `build`
+   of { vessel, scoops }. Everything downstream — ticket, kitchen, receipt,
+   totals — goes through these four helpers so neither kind is a special case.
+   -------------------------------------------------------------------------- */
+
+/** Stable identity for a line. Identical cones stack instead of listing twice. */
+window.MENU.buildKey = function (build) {
+  return 'ice:' + build.vessel + ':' + build.scoops.join('+');
+};
+
+window.MENU.lineKey = function (line) {
+  return line.build ? window.MENU.buildKey(line.build) : line.id;
+};
+
+window.MENU.linePrice = function (line) {
+  if (line.build) {
+    var vessel = window.MENU.vesselById[line.build.vessel];
+    return (vessel ? vessel.price : 0) +
+      line.build.scoops.length * window.MENU.iceCream.scoopPrice;
+  }
+  var item = window.MENU.byId[line.id];
+  return item ? item.price : 0;
+};
+
+/** Returns the `{ sk, en }` pair; callers run it through I18N.name(). */
+window.MENU.lineName = function (line) {
+  if (!line.build) return window.MENU.byId[line.id].name;
+
+  var vessel = window.MENU.vesselById[line.build.vessel];
+  return ['sk', 'en'].reduce(function (out, lang) {
+    var flavours = line.build.scoops.map(function (id) {
+      return window.MENU.flavourById[id].name[lang];
+    });
+    out[lang] = vessel.name[lang] + ': ' + flavours.join(', ');
+    return out;
+  }, {});
+};
+
+window.MENU.lineEmoji = function (line) {
+  if (!line.build) return window.MENU.byId[line.id].emoji;
+  var vessel = window.MENU.vesselById[line.build.vessel];
+  return vessel ? vessel.emoji : '\u{1F366}';
+};
+
+/** Guards against saved data referring to items or flavours that no longer exist. */
+window.MENU.isValidLine = function (line) {
+  if (!line || !(line.qty > 0)) return false;
+
+  if (line.build) {
+    var build = line.build;
+    if (!window.MENU.vesselById[build.vessel]) return false;
+    if (!Array.isArray(build.scoops)) return false;
+    if (build.scoops.length < 1 || build.scoops.length > window.MENU.iceCream.maxScoops) return false;
+    return build.scoops.every(function (id) { return !!window.MENU.flavourById[id]; });
+  }
+
+  return !!window.MENU.byId[line.id];
+};

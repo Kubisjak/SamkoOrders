@@ -35,6 +35,30 @@
       <section class="menu" aria-label="Menu">
         <div class="cats" id="cats" role="tablist"></div>
         <div class="foods" id="foods"></div>
+
+        <!-- Ice cream counter: shown instead of the food grid for that category -->
+        <div class="builder" id="builder" hidden>
+          <div class="builder__stage">
+            <div class="builder__cone" id="builder-cone"></div>
+            <button class="builder__undo" id="builder-undo" type="button" hidden>
+              <span aria-hidden="true">↩</span> <span data-i18n="undoScoop">Späť</span>
+            </button>
+          </div>
+          <div class="builder__panel">
+            <p class="builder__label" data-i18n="pickVessel">Do čoho?</p>
+            <div class="vessels" id="vessels" role="radiogroup"></div>
+            <p class="builder__label">
+              <span data-i18n="pickFlavour">Aké príchute?</span>
+              <span class="builder__count" id="builder-count"></span>
+            </p>
+            <div class="flavours" id="flavours"></div>
+            <button class="btn btn--send builder__add" id="builder-add" type="button">
+              <span aria-hidden="true">🍦</span>
+              <span data-i18n="addToOrder">Pridať do objednávky</span>
+              <span class="builder__price" id="builder-price"></span>
+            </button>
+          </div>
+        </div>
       </section>
 
       <aside class="ticket" aria-label="Current order">

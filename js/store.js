@@ -17,6 +17,8 @@ window.Store = (function () {
     draft: [],
     /** Orders already sent to the kitchen, newest first. */
     orders: [],
+    /** Ice cream currently being assembled at the counter. */
+    build: { vessel: 'cone', scoops: [] },
     /** Incrementing ticket number, so the kitchen has something to shout. */
     nextTicket: 1
   };
@@ -37,6 +39,7 @@ window.Store = (function () {
       }).filter(function (order) {
         return order.items.length > 0;
       });
+      merged.build = sanitiseBuild(merged.build);
       return merged;
     } catch (err) {
       console.warn('Could not read saved orders, starting fresh.', err);
@@ -46,9 +49,24 @@ window.Store = (function () {
 
   function sanitiseLines(lines) {
     if (!Array.isArray(lines)) return [];
-    return lines.filter(function (line) {
-      return line && window.MENU.byId[line.id] && line.qty > 0;
-    });
+    return lines
+      .filter(function (line) { return window.MENU.isValidLine(line); })
+      // Lines saved before built items existed have no key; derive it.
+      .map(function (line) {
+        return Object.assign({}, line, { key: window.MENU.lineKey(line) });
+      });
+  }
+
+  function sanitiseBuild(build) {
+    var fresh = { vessel: 'cone', scoops: [] };
+    if (!build || !window.MENU.vesselById[build.vessel]) return fresh;
+    if (!Array.isArray(build.scoops)) return fresh;
+    return {
+      vessel: build.vessel,
+      scoops: build.scoops
+        .filter(function (id) { return !!window.MENU.flavourById[id]; })
+        .slice(0, window.MENU.iceCream.maxScoops)
+    };
   }
 
   function save() {
@@ -65,8 +83,19 @@ window.Store = (function () {
     listeners.forEach(function (fn) { fn(state); });
   }
 
-  function findLine(id) {
-    return state.draft.filter(function (line) { return line.id === id; })[0];
+  function findLine(key) {
+    return state.draft.filter(function (line) { return line.key === key; })[0];
+  }
+
+  /** Adds one of `line`, merging into the matching line if it is already there. */
+  function addLine(line) {
+    var existing = findLine(line.key);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      state.draft.push(line);
+    }
+    emit();
   }
 
   return {
@@ -97,21 +126,15 @@ window.Store = (function () {
 
     addToDraft: function (itemId) {
       if (!window.MENU.byId[itemId]) return;
-      var line = findLine(itemId);
-      if (line) {
-        line.qty += 1;
-      } else {
-        state.draft.push({ id: itemId, qty: 1 });
-      }
-      emit();
+      addLine({ key: itemId, id: itemId, qty: 1 });
     },
 
-    removeFromDraft: function (itemId) {
-      var line = findLine(itemId);
+    removeFromDraft: function (key) {
+      var line = findLine(key);
       if (!line) return;
       line.qty -= 1;
       if (line.qty <= 0) {
-        state.draft = state.draft.filter(function (l) { return l.id !== itemId; });
+        state.draft = state.draft.filter(function (l) { return l.key !== key; });
       }
       emit();
     },
@@ -123,8 +146,61 @@ window.Store = (function () {
 
     draftTotal: function () {
       return state.draft.reduce(function (sum, line) {
-        return sum + window.MENU.byId[line.id].price * line.qty;
+        return sum + window.MENU.linePrice(line) * line.qty;
       }, 0);
+    },
+
+    /* --- Ice cream counter ------------------------------------------------ */
+
+    getBuild: function () { return state.build; },
+
+    setVessel: function (vesselId) {
+      if (!window.MENU.vesselById[vesselId]) return;
+      state.build.vessel = vesselId;
+      emit();
+    },
+
+    /** Returns false when the cone is already full, so the UI can say so. */
+    addScoop: function (flavourId) {
+      if (!window.MENU.flavourById[flavourId]) return false;
+      if (state.build.scoops.length >= window.MENU.iceCream.maxScoops) return false;
+      state.build.scoops.push(flavourId);
+      emit();
+      return true;
+    },
+
+    /** Removes one scoop; with no index, the top one. */
+    removeScoop: function (index) {
+      var at = typeof index === 'number' ? index : state.build.scoops.length - 1;
+      if (at < 0 || at >= state.build.scoops.length) return;
+      state.build.scoops.splice(at, 1);
+      emit();
+    },
+
+    clearBuild: function () {
+      state.build = { vessel: state.build.vessel, scoops: [] };
+      emit();
+    },
+
+    buildPrice: function () {
+      return window.MENU.linePrice({ build: state.build });
+    },
+
+    /** Adds another of an already-built cone, e.g. from the ticket's + button. */
+    addBuiltLine: function (build) {
+      var copy = { vessel: build.vessel, scoops: build.scoops.slice() };
+      if (!window.MENU.isValidLine({ build: copy, qty: 1 })) return;
+      addLine({ key: window.MENU.buildKey(copy), id: 'icecream', build: copy, qty: 1 });
+    },
+
+    /** Moves the assembled cone onto the ticket and clears the counter. */
+    addBuildToDraft: function () {
+      if (state.build.scoops.length === 0) return null;
+      var build = { vessel: state.build.vessel, scoops: state.build.scoops.slice() };
+      addLine({ key: window.MENU.buildKey(build), id: 'icecream', build: build, qty: 1 });
+      state.build = { vessel: build.vessel, scoops: [] };
+      emit();
+      return build;
     },
 
     draftCount: function () {
@@ -190,7 +266,7 @@ window.Store = (function () {
 
     orderTotal: function (order) {
       return order.items.reduce(function (sum, line) {
-        return sum + window.MENU.byId[line.id].price * line.qty;
+        return sum + window.MENU.linePrice(line) * line.qty;
       }, 0);
     }
   };

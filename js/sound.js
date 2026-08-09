@@ -188,6 +188,19 @@ window.Sound = (function () {
       });
     },
 
+    /**
+     * A scoop landing on the cone: a soft wet plop, pitched up as the stack
+     * grows so the third scoop sounds higher than the first.
+     */
+    scoop: function (index) {
+      safely(function () {
+        var base = 300 * Math.pow(2, Math.min(index || 0, 3) * 2 / 12);
+        noise(0, 0.05, 0.12, 900, 0.6);
+        note(base, 0, 0.13, 'sine', 0.26, base * 1.7);
+        note(base * 3, 0.02, 0.07, 'triangle', 0.05);
+      });
+    },
+
     /** Item taken back off the order — the same idea, falling. */
     remove: function () {
       safely(function () {

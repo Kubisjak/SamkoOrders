@@ -20,6 +20,7 @@
   --red: #fb7185;
   --green: #6dd36d;
   --pink: #f27bc4;
+  --cream: #c79bea;
 
   --radius: 22px;
   --shadow: 0 4px 0 rgba(61, 43, 31, .12), 0 10px 24px rgba(61, 43, 31, .10);
@@ -231,6 +232,164 @@ button {
 .cat.is-active.cat--red { background: var(--red); }
 .cat.is-active.cat--green { background: var(--green); }
 .cat.is-active.cat--pink { background: var(--pink); }
+.cat.is-active.cat--cream { background: var(--cream); }
+
+/* --- Ice cream counter ------------------------------------------------------ */
+
+.builder {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.builder[hidden] { display: none; }
+
+.builder__stage {
+  position: relative;
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+}
+
+.builder__cone {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+}
+
+/* The SVG carries its own aspect ratio, so CSS can size it freely. */
+.builder__cone .cone { width: min(100%, 190px); height: auto; }
+
+.cone { display: block; overflow: visible; }
+/* Each new scoop drops into place. */
+.cone__scoop { animation: scoop-drop .28s cubic-bezier(.2, 1.5, .4, 1); transform-origin: center; }
+
+@keyframes scoop-drop {
+  0% { transform: translateY(-26px) scale(.5); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+
+.builder__undo {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.builder__undo:active { transform: scale(.94); }
+
+.builder__panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.builder__label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.builder__count { margin-left: auto; color: var(--accent-dark); }
+
+.vessels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+.vessel {
+  border: 3px solid transparent;
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  transition: transform .12s ease;
+}
+
+.vessel__emoji { font-size: 26px; line-height: 1; }
+.vessel:active { transform: scale(.94); }
+.vessel.is-active { border-color: var(--accent); background: #fff2e2; color: var(--accent-dark); }
+
+.flavours {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 8px;
+  align-content: start;
+  padding: 2px;
+}
+
+.flavour {
+  border: 0;
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform .1s ease;
+}
+
+.flavour:active { transform: scale(.92); }
+
+/* The disc is the flavour's colour, the same one the scoop will be. */
+.flavour__disc {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, .12);
+}
+
+.flavour__emoji { font-size: 20px; line-height: 1; }
+
+.flavour__name {
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.flavour.is-chosen { background: #fff2e2; box-shadow: 0 0 0 3px var(--accent); }
+
+/* btn--send carries flex:1 for the ticket's button row; here it would swallow
+   every spare pixel of the column. Two classes to out-rank it, since .btn--send
+   is declared later in this file. */
+.builder .builder__add { width: 100%; flex: none; }
+.builder__price { margin-left: auto; opacity: .85; }
+
+/* Mini cone used in ticket lines and on kitchen cards. */
+.cone-mini { display: inline-flex; align-items: flex-end; }
 
 /* --- Food grid ------------------------------------------------------------- */
 
@@ -308,6 +467,7 @@ button {
 .food--red { background: #fff0f2; }
 .food--green { background: #eefbee; }
 .food--pink { background: #fff0f9; }
+.food--cream { background: #f6f0ff; }
 
 @keyframes pop {
   0% { transform: scale(0); }
@@ -953,18 +1113,32 @@ button {
 
   .view--order { grid-template-rows: minmax(180px, 1fr) auto; }
 
-  .cats { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  /* Five categories on one row. They must not wrap — that is what collapsed
+     the grid before — so the labels go and the emoji carries the meaning. */
+  .cats { grid-template-columns: repeat(5, 1fr); gap: 5px; }
 
   .cat {
-    min-height: 72px;
-    padding: 8px 4px;
-    gap: 2px;
+    min-height: 62px;
+    padding: 6px 2px;
+    gap: 0;
     border-width: 3px;
-    border-radius: 16px;
-    font-size: 11px;
+    border-radius: 14px;
+    font-size: 9px;
   }
 
   .cat__emoji { font-size: 28px; }
+  .cat__label { display: none; }
+
+  /* Counter stacks: cone on top, controls under it. */
+  .builder { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 8px; }
+  .builder__stage { flex-direction: row; gap: 12px; padding: 8px; }
+  .builder__cone .cone { width: min(100%, 104px); }
+  .builder__label { font-size: 13px; }
+  .flavours { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+  .flavour__disc { width: 36px; height: 36px; }
+  .flavour__name { font-size: 10px; }
+  .vessel { font-size: 11px; }
+  .vessel__emoji { font-size: 22px; }
 
   .foods {
     gap: 8px;
@@ -994,7 +1168,10 @@ button {
   /* Landscape phone: give the grid every pixel it can get. Square tiles would
      be as tall as the whole grid area here, so they become short and wide. */
   .food__name { display: none; }
-  .cat { min-height: 60px; font-size: 11px; }
+  /* Five fixed columns: auto-fit would wrap the fifth onto its own row and
+     leave the food grid with nothing. */
+  .cats { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .cat { min-height: 56px; font-size: 11px; }
   .cat__emoji { font-size: 26px; }
 
   .foods { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }

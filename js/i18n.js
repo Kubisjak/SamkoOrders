@@ -44,7 +44,14 @@ window.I18N = {
       approved: 'SCHVÁLENÉ',
       thanks: 'Ďakujeme!',
       done: 'Hotovo',
-      receiptFor: 'Účet č.'
+      receiptFor: 'Účet č.',
+      pickVessel: 'Do čoho?',
+      pickFlavour: 'Aké príchute?',
+      scoops: 'gule',
+      addToOrder: 'Pridať do objednávky',
+      coneFull: 'Kornútok je plný!',
+      undoScoop: 'Späť',
+      tapFlavour: 'Klikni na príchuť'
     },
     en: {
       appName: "Samko's Restaurant",
@@ -84,7 +91,14 @@ window.I18N = {
       approved: 'APPROVED',
       thanks: 'Thank you!',
       done: 'Done',
-      receiptFor: 'Bill no.'
+      receiptFor: 'Bill no.',
+      pickVessel: 'In what?',
+      pickFlavour: 'Which flavours?',
+      scoops: 'scoops',
+      addToOrder: 'Add to order',
+      coneFull: 'The cone is full!',
+      undoScoop: 'Undo',
+      tapFlavour: 'Tap a flavour'
     }
   },
 

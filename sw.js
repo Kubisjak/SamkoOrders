@@ -5,7 +5,7 @@
  * Strategy is cache-first with a background refresh. Bump CACHE_NAME whenever
  * the file list changes so old caches get cleaned out on the next visit.
  */
-var CACHE_NAME = 'samko-orders-v5';
+var CACHE_NAME = 'samko-orders-v6';
 
 var ASSETS = [
   '.',
