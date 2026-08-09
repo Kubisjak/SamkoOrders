@@ -8,10 +8,16 @@ everything is saved on the device itself.
 
 ## How it works
 
-**Order tab** — pick a table (each one has an animal so it works without
-reading), pick a category, then tap food tiles to add them. Every tap adds one
-portion and pops a `×2`, `×3` badge on the tile. The ticket on the right totals
-it up in play coins, and **Send to kitchen** fires it off with a little fanfare.
+**Order tab** — pick a category, then tap food tiles to add them. Every tap adds
+one portion and pops a `×2`, `×3` badge on the tile. The menu has the screen to
+itself; the order lives in the **basket bar** along the bottom, which shows what
+has been ordered as a row of pictures plus the running total in play coins.
+**Send to kitchen** fires it off with a little fanfare.
+
+Tapping the basket opens the full ticket — itemised lines, quantity steppers,
+the table picker and Clear. Those are all things a grown-up needs occasionally
+and a child never does, so they stay folded away rather than competing with the
+food. The ⚙️ button in the corner hides sound and language for the same reason.
 
 **Kitchen tab** — every sent order arrives as a card and moves through
 *New → Cooking → Ready → Served*, one button at a time. Hitting **It's ready!**
@@ -23,12 +29,20 @@ tabs — one takes orders, one cooks.
 
 ### The ice cream counter
 
-The **Zmrzlina** tab is not a grid of items but a little counter. Pick a vessel
-(cone, big cone or cup), then tap flavours to stack up to three scoops. The cone
-on the left is drawn live from the actual choices — a scoop of Šmolková really
-is Smurf blue — and tapping a scoop takes it back off. The finished cone goes
-onto the ticket as a single line and keeps its drawing all the way through the
-kitchen and onto the receipt.
+The **Zmrzlina** tab is not a grid of items but a little counter. Tap flavours to
+stack up to three scoops; the cone beside them is drawn live from the actual
+choices, so a scoop of Šmolková really is Smurf blue. The finished cone goes onto
+the ticket as a single line and keeps its drawing all the way through the kitchen
+and onto the receipt.
+
+Taking a scoop off is meant to cost about what putting one on costs, so there are
+two equally obvious ways: the big **Zlož guľu** button under the cone, or tapping
+the scoop itself — the top one carries a small ✕ to say so.
+
+The vessel (cone, big cone or cup) is chosen from a chip under the drawing that
+rolls out when tapped and folds away again once picked. The drawing already shows
+which vessel is in use, so the chooser does not need to sit there while flavours
+are being picked.
 
 Identical cones stack into one line; different ones stay separate.
 
@@ -99,7 +113,7 @@ entries to change how many tables the restaurant has.
 
 | Path | What it does |
 | --- | --- |
-| `index.html` | Page skeleton — both views and the tab bar |
+| `index.html` | Page skeleton — both views, the basket bar and the sheets |
 | `css/styles.css` | All styling, including the iPad-specific touch handling |
 | `js/menu.js` | The menu, tables, ice cream flavours, and order-line helpers |
 | `js/store.js` | State plus its mirror in `localStorage` |

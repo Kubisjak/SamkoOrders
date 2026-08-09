@@ -20,17 +20,27 @@
   <div class="app">
     <header class="topbar">
       <h1 class="topbar__title"><span aria-hidden="true">🍽️</span> <span data-i18n="appName">Samkova reštaurácia</span></h1>
+      <!-- Grown-up controls. None of these are Samko's, so they fold away
+           behind one button instead of sitting on every screen. -->
       <div class="topbar__actions">
-        <button class="iconbtn" id="sound-toggle" type="button" aria-pressed="true">
-          <span class="iconbtn__glyph" id="sound-glyph" aria-hidden="true">🔊</span>
+        <button class="iconbtn" id="settings-toggle" type="button" aria-expanded="false" aria-controls="settings">
+          <span class="iconbtn__glyph" aria-hidden="true">⚙️</span>
         </button>
-        <button class="iconbtn" id="lang-toggle" type="button">
-          <span class="iconbtn__glyph" id="lang-glyph" aria-hidden="true">🇸🇰</span>
-        </button>
+        <div class="settings" id="settings" hidden>
+          <button class="settings__item" id="sound-toggle" type="button" aria-pressed="true">
+            <span class="iconbtn__glyph" id="sound-glyph" aria-hidden="true">🔊</span>
+            <span id="sound-label">Zvuk</span>
+          </button>
+          <button class="settings__item" id="lang-toggle" type="button">
+            <span class="iconbtn__glyph" id="lang-glyph" aria-hidden="true">🇸🇰</span>
+            <span data-i18n="language">Jazyk</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- ORDER VIEW -->
+    <!-- ORDER VIEW — the menu now has the screen to itself; the order lives in
+         the basket bar underneath. -->
     <main class="view view--order" id="view-order">
       <section class="menu" aria-label="Menu">
         <div class="cats" id="cats" role="tablist"></div>
@@ -40,13 +50,18 @@
         <div class="builder" id="builder" hidden>
           <div class="builder__stage">
             <div class="builder__cone" id="builder-cone"></div>
-            <button class="builder__undo" id="builder-undo" type="button" hidden>
-              <span aria-hidden="true">↩</span> <span data-i18n="undoScoop">Späť</span>
+            <!-- The cone drawing already shows which vessel is chosen, so the
+                 chooser itself stays rolled up until it is wanted. -->
+            <div class="vesselpick">
+              <button class="tablepick" id="vessel-toggle" type="button" aria-expanded="false"></button>
+              <div class="vessels" id="vessels" role="radiogroup" aria-label="Cone or cup" hidden></div>
+            </div>
+            <button class="builder__remove" id="builder-undo" type="button" hidden>
+              <span class="builder__remove-glyph" aria-hidden="true">🥄</span>
+              <span data-i18n="undoScoop">Zlož guľu</span>
             </button>
           </div>
           <div class="builder__panel">
-            <p class="builder__label" data-i18n="pickVessel">Do čoho?</p>
-            <div class="vessels" id="vessels" role="radiogroup"></div>
             <p class="builder__label">
               <span data-i18n="pickFlavour">Aké príchute?</span>
               <span class="builder__count" id="builder-count"></span>
@@ -60,31 +75,6 @@
           </div>
         </div>
       </section>
-
-      <aside class="ticket" aria-label="Current order">
-        <h2 class="ticket__title">
-          <span aria-hidden="true">🧾</span>
-          <span data-i18n="yourOrder">Objednávka</span>
-          <!-- Table picking is a rare, grown-up concern, so it hides behind this
-               chip instead of taking a whole row next to the food. -->
-          <button class="tablepick" id="table-toggle" type="button" aria-expanded="false"></button>
-        </h2>
-        <div class="tables" id="tables" role="radiogroup" aria-label="Table" hidden></div>
-        <ul class="ticket__lines" id="ticket-lines"></ul>
-        <p class="ticket__empty" id="ticket-empty" data-i18n="emptyOrder">Klikni na jedlo a pridaj ho sem!</p>
-        <div class="ticket__footer">
-          <div class="ticket__total">
-            <span data-i18n="total">Spolu</span>
-            <strong><span id="ticket-total">0</span> <span aria-hidden="true">🪙</span></strong>
-          </div>
-          <div class="ticket__buttons">
-            <button class="btn btn--ghost" id="clear-draft" type="button" data-i18n="clear">Vymazať</button>
-            <button class="btn btn--send" id="send-draft" type="button">
-              <span aria-hidden="true">👨‍🍳</span> <span data-i18n="send">Poslať do kuchyne</span>
-            </button>
-          </div>
-        </div>
-      </aside>
     </main>
 
     <!-- KITCHEN VIEW -->
@@ -96,6 +86,22 @@
       <p class="kitchen__empty" id="kitchen-empty" data-i18n="noOrders">Zatiaľ žiadne objednávky.</p>
       <div class="orders" id="orders"></div>
     </main>
+
+    <!-- BASKET BAR — the order as a row of pictures, always visible, never in
+         the way. Tapping it opens the full ticket. -->
+    <div class="basket" id="basket">
+      <button class="basket__strip" id="basket-strip" type="button">
+        <span class="basket__items" id="basket-items"></span>
+        <span class="basket__hint" id="basket-hint" data-i18n="emptyOrder">Klikni na jedlo!</span>
+      </button>
+      <div class="basket__total">
+        <span id="ticket-total">0</span> <span aria-hidden="true">🪙</span>
+      </div>
+      <button class="btn btn--send basket__send" id="send-draft" type="button">
+        <span aria-hidden="true">👨‍🍳</span>
+        <span class="basket__send-label" data-i18n="send">Poslať do kuchyne</span>
+      </button>
+    </div>
 
     <nav class="tabbar">
       <button class="tab is-active" id="tab-order" type="button" data-view="order">
@@ -110,6 +116,36 @@
         <span class="tab__label" data-i18n="tabKitchen">Kuchyňa</span>
       </button>
     </nav>
+  </div>
+
+  <!-- The full ticket, opened from the basket bar -->
+  <div class="modal" id="basket-modal" hidden>
+    <div class="modal__backdrop" id="basket-backdrop"></div>
+    <div class="modal__panel" role="dialog" aria-modal="true">
+      <div class="ticket">
+        <h2 class="ticket__title">
+          <span aria-hidden="true">🧾</span>
+          <span data-i18n="yourOrder">Objednávka</span>
+          <button class="tablepick" id="table-toggle" type="button" aria-expanded="false"></button>
+        </h2>
+        <div class="tables" id="tables" role="radiogroup" aria-label="Table" hidden></div>
+        <ul class="ticket__lines" id="ticket-lines"></ul>
+        <p class="ticket__empty" id="ticket-empty" data-i18n="emptyOrder">Klikni na jedlo a pridaj ho sem!</p>
+        <div class="ticket__footer">
+          <div class="ticket__total">
+            <span data-i18n="total">Spolu</span>
+            <strong><span id="sheet-total">0</span> <span aria-hidden="true">🪙</span></strong>
+          </div>
+          <div class="ticket__buttons">
+            <button class="btn btn--ghost" id="clear-draft" type="button" data-i18n="clear">Vymazať</button>
+            <button class="btn btn--send" id="sheet-send" type="button">
+              <span aria-hidden="true">👨‍🍳</span> <span data-i18n="send">Poslať do kuchyne</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn--ghost btn--wide" id="basket-close" type="button" data-i18n="done">Hotovo</button>
+    </div>
   </div>
 
   <!-- PAY: receipt + card terminal -->

@@ -13,6 +13,8 @@
   /** Guards the food grid rebuild: only category and language change its markup. */
   var renderedGrid = null;
   var tablesOpen = false;
+  var vesselsOpen = false;
+  var settingsOpen = false;
 
   /** Order currently on the terminal, and how far through paying it is. */
   var payingOrderId = null;
@@ -160,6 +162,23 @@
         group.setAttribute('tabindex', '0');
         group.style.cursor = 'pointer';
         group.addEventListener('click', function () { onScoopClick(index); });
+
+        // Any scoop can be tapped off, but only the top one is badged —
+        // otherwise the cone turns into a wall of little crosses.
+        if (index === build.scoops.length - 1) {
+          var badge = svg('g', { class: 'cone__x' });
+          badge.appendChild(svg('circle', {
+            cx: 66, cy: cy - 13, r: 8,
+            fill: '#fff', stroke: 'rgba(61,43,31,.25)', 'stroke-width': 1.5
+          }));
+          ['M62.5 ' + (cy - 16.5) + ' L69.5 ' + (cy - 9.5),
+           'M69.5 ' + (cy - 16.5) + ' L62.5 ' + (cy - 9.5)].forEach(function (d) {
+            badge.appendChild(svg('path', {
+              d: d, stroke: '#8a7461', 'stroke-width': 2.2, 'stroke-linecap': 'round'
+            }));
+          });
+          group.appendChild(badge);
+        }
       }
       root.appendChild(group);
     });
@@ -215,11 +234,48 @@
     el.soundGlyph.textContent = soundOn ? '\u{1F50A}' : '\u{1F507}';
     el.soundToggle.classList.toggle('is-off', !soundOn);
     el.soundToggle.setAttribute('aria-pressed', String(soundOn));
-    el.soundToggle.setAttribute('aria-label', window.I18N.t(soundOn ? 'soundOn' : 'soundOff'));
+    el.soundLabel.textContent = window.I18N.t(soundOn ? 'soundOn' : 'soundOff');
 
     var lang = window.Store.getLanguage();
     el.langGlyph.textContent = lang === 'sk' ? '\u{1F1F8}\u{1F1F0}' : '\u{1F1EC}\u{1F1E7}';
-    el.langToggle.setAttribute('aria-label', window.I18N.t('language'));
+
+    el.settings.hidden = !settingsOpen;
+    el.settingsToggle.setAttribute('aria-expanded', String(settingsOpen));
+  }
+
+  /** The order as a row of pictures, plus the total and the send button. */
+  function renderBasket() {
+    var state = window.Store.getState();
+    var empty = state.draft.length === 0;
+
+    el.basketHint.hidden = !empty;
+    el.basketItems.hidden = empty;
+    el.sendDraft.disabled = empty;
+    el.ticketTotal.textContent = window.Store.draftTotal();
+
+    reconcile(
+      el.basketItems,
+      state.draft.map(function (line) { return line.key; }),
+      function () {
+        var chip = node('span', 'basket__chip');
+        chip.appendChild(node('span', 'basket__chip-art'));
+        chip.appendChild(node('span', 'basket__chip-qty'));
+        return chip;
+      },
+      function (chip, key) {
+        var line = state.draft.filter(function (l) { return l.key === key; })[0];
+        var art = chip.children[0];
+        art.textContent = '';
+        if (line.build) {
+          art.appendChild(conePreview(line.build, 22));
+        } else {
+          art.textContent = window.MENU.lineEmoji(line);
+        }
+        chip.children[1].textContent = line.qty > 1 ? '×' + line.qty : '';
+        chip.children[1].hidden = line.qty <= 1;
+        chip.title = window.I18N.name(window.MENU.lineName(line));
+      }
+    );
   }
 
   function renderTables() {
@@ -308,8 +364,18 @@
     el.builderUndo.hidden = build.scoops.length === 0;
     el.builderCount.textContent = build.scoops.length + '/' + ice.maxScoops + ' ' +
       window.I18N.t('scoops');
-    el.builderPrice.textContent = window.Store.buildPrice() + ' \u{1FA99}';
+    // No price until there is something to price — an empty cone reading
+    // "1 coin" is just noise.
+    el.builderPrice.textContent = build.scoops.length
+      ? window.Store.buildPrice() + ' \u{1FA99}'
+      : '';
     el.builderAdd.disabled = build.scoops.length === 0;
+
+    var vessel = window.MENU.vesselById[build.vessel];
+    el.vesselToggle.textContent = vessel.emoji + ' ' + window.I18N.name(vessel.name) +
+      (vesselsOpen ? ' ▴' : ' ▾');
+    el.vesselToggle.setAttribute('aria-expanded', String(vesselsOpen));
+    el.vessels.hidden = !vesselsOpen;
 
     reconcile(
       el.vessels,
@@ -331,6 +397,7 @@
         button.children[1].textContent = window.I18N.name(vessel.name);
         button.onclick = function () {
           window.Sound.click();
+          vesselsOpen = false;   // picking one rolls the row away again
           window.Store.setVessel(key);
         };
       }
@@ -419,8 +486,8 @@
 
     el.ticketEmpty.hidden = state.draft.length > 0;
     el.ticketLines.hidden = state.draft.length === 0;
-    el.ticketTotal.textContent = window.Store.draftTotal();
-    el.sendDraft.disabled = state.draft.length === 0;
+    el.sheetTotal.textContent = window.Store.draftTotal();
+    el.sheetSend.disabled = state.draft.length === 0;
     el.clearDraft.disabled = state.draft.length === 0;
 
     reconcile(
@@ -697,6 +764,7 @@
     renderCategories();
     renderBuilder();
     renderFoods();
+    renderBasket();
     renderTicket();
     renderKitchen();
     renderPay();
@@ -724,7 +792,20 @@
       builderPrice: $('builder-price'),
       builderAdd: $('builder-add'),
       vessels: $('vessels'),
+      vesselToggle: $('vessel-toggle'),
       flavours: $('flavours'),
+      basket: $('basket'),
+      basketStrip: $('basket-strip'),
+      basketItems: $('basket-items'),
+      basketHint: $('basket-hint'),
+      basketModal: $('basket-modal'),
+      basketBackdrop: $('basket-backdrop'),
+      basketClose: $('basket-close'),
+      sheetTotal: $('sheet-total'),
+      sheetSend: $('sheet-send'),
+      settings: $('settings'),
+      settingsToggle: $('settings-toggle'),
+      soundLabel: $('sound-label'),
       ticketLines: $('ticket-lines'),
       ticketEmpty: $('ticket-empty'),
       ticketTotal: $('ticket-total'),
@@ -767,6 +848,41 @@
       window.Sound.click();
       renderTables();
     };
+
+    el.vesselToggle.onclick = function () {
+      vesselsOpen = !vesselsOpen;
+      window.Sound.click();
+      renderBuilder();
+    };
+
+    el.settingsToggle.onclick = function () {
+      settingsOpen = !settingsOpen;
+      window.Sound.click();
+      renderToggles();
+    };
+
+    // Anywhere outside closes the grown-up menu again.
+    document.addEventListener('pointerdown', function (event) {
+      if (!settingsOpen) return;
+      if (el.settings.contains(event.target) || el.settingsToggle.contains(event.target)) return;
+      settingsOpen = false;
+      renderToggles();
+    });
+
+    el.basketStrip.onclick = function () {
+      window.Sound.click();
+      el.basketModal.hidden = false;
+    };
+
+    function closeBasket() {
+      el.basketModal.hidden = true;
+      tablesOpen = false;
+      renderTables();
+    }
+
+    el.basketClose.onclick = function () { window.Sound.click(); closeBasket(); };
+    el.basketBackdrop.onclick = closeBasket;
+    el.sheetSend.onclick = function () { closeBasket(); el.sendDraft.click(); };
 
     el.soundToggle.onclick = function () {
       window.Store.toggleSound();
@@ -819,7 +935,9 @@
     el.payBackdrop.onclick = function () { closePay(); };
 
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && !el.payModal.hidden) closePay();
+      if (event.key !== 'Escape') return;
+      if (!el.payModal.hidden) closePay();
+      else if (!el.basketModal.hidden) closeBasket();
     });
 
     // Safari will not make a sound until audio starts inside a user gesture.
