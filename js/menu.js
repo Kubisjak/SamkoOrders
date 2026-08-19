@@ -18,7 +18,8 @@ window.MENU = {
         { id: 'milk', emoji: '\u{1F95B}', name: { sk: 'Mlieko', en: 'Milk' }, price: 2 },
         { id: 'lemonade', emoji: '\u{1F34B}', name: { sk: 'Limonáda', en: 'Lemonade' }, price: 3 },
         { id: 'cocoa', emoji: '☕', name: { sk: 'Kakao', en: 'Cocoa' }, price: 3 },
-        { id: 'smoothie', emoji: '\u{1F9CB}', name: { sk: 'Smoothie', en: 'Smoothie' }, price: 4 }
+        { id: 'smoothie', emoji: '\u{1F9CB}', name: { sk: 'Smoothie', en: 'Smoothie' }, price: 4 },
+        { id: 'cola', emoji: '\u{1F964}', name: { sk: 'Kola', en: 'Cola' }, price: 3 }
       ]
     },
     {
