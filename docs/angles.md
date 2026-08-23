@@ -9,7 +9,7 @@ Status legend: **adopted** (folded into the brief/launch plan) · **testing** (h
 ## 2026-08-23
 
 ### 1. Open-source the factory kit — the kit *is* the marketing
-Give the starter template + kid-UX rulebook away publicly (it's derived from an already-public repo). Parents won't self-serve it anyway — they're paying for "don't make me think." Developers who remix it become evangelists and press; the repo becomes the SEO/AEO anchor and the trust signal ("look, nothing is hidden — no tracking, it's all right here"). Revenue stays in the service: build-for-me, hosting, the fix-it-by-tonight loop. **Status: adopted** (GTM section; launch plan A-phase task).
+Give the starter template + kid-UX rulebook away publicly (it's derived from an already-public repo). Parents won't self-serve it anyway — they're paying for "don't make me think." Developers who remix it become evangelists and press; the repo becomes the SEO/AEO anchor and the trust signal ("look, nothing is hidden — no tracking, it's all right here"). Revenue stays in the service: build-for-me, hosting, the fix-it-by-tonight loop. **Status: adopted → REJECTED 2026-08-23** (founder decision — see the second-session update below; replaced by #17 closed factory / open output).
 
 ### 2. The colophon referral loop
 Every delivered app ends with a small parent-gated colophon page: "Handmade for Samko · [Brand]" plus one action — *"Make one for another kid"* → a one-click remix flow (same app, new name/language/obsessions) as a gift. The product is the referral channel; a gifted app arrives already personalized, which is a better ad than any ad. **Status: adopted** (GTM; Stage 1 backlog).
@@ -55,6 +55,25 @@ The subscription's justification is that the app *grows with the child*: "she ma
 
 ### 16. The grandparent gift card
 Gifting a link feels cheap; gifting a box doesn't. A printable/printed card — "This certificate entitles Ema to an app of her own" — with a QR code and three questions the grandparent answers with the parent (name, language, current obsession). Solves the "digital gifts have no ritual" problem and opens the highest-WTP channel. **Status: adopted** (pricing SKU; Stage 1 asset).
+
+---
+
+## 2026-08-23 (second session — naming round two, and the closed-source decision)
+
+### Update to #1 (open-source the kit): **rejected** — founder decision
+Kubo's call: keep the factory closed. His thesis: parents *will* self-serve when the product is targeted at them and setup feels like magic — so the kit's openness isn't needed as a trust or distribution crutch, and giving away the machine only feeds copycats. Each function the open kit served is replaced: **trust** → the output apps are inherently inspectable static files + a public trust page (#17); **distribution** → template gallery, press story, the still-public SamkoOrders origin repo; **AEO anchor** → trust page + gallery. Status of #1 changes from adopted to **rejected**; nothing else in the log is rewritten.
+
+### 17. Closed factory, open output
+The resolution of the trust-vs-secrecy tension: every delivered app is plain readable HTML/JS the family owns and can export — "your child's app contains no network calls; view source and check." The *output* is open by nature; only the factory (templates, rulebook, skill, pipeline) is proprietary. Trust preserved, moat kept. **Status: adopted** (strategy §9; trust §16; launch plan B2.2).
+
+### 18. The name as the SLA — "By Bedtime"
+Naming round two surfaced a promise-name: **By Bedtime** (`bybedtime.app` unresolved at probe; bybedtime.com taken — inspect before committing). "Tell us about your kid at breakfast. The app is ready by bedtime." The name is simultaneously the brand, the pitch, and the delivery commitment — a forcing function on operations and a real risk (vacations, growth spikes). Promise-names compound PR ("the company literally named after its delivery time") but punish misses. **Status: testing** (naming finalist A; KidApp Studio is finalist B).
+
+### 19. Wizard-of-Oz self-serve — self-service *ordering*, not self-service *building*
+The synthesis of "parents won't build" and "parents will self-serve": the parent's entire experience is a five-minute order form and a delivery email — never an editor, never code. At Stage 1 a human silently reviews every generated app inside the delivery window; the parent experiences full self-serve magic while quality stays hand-checked. Stage 2 removes the human gradually (flagged apps only, then spot checks). Also fixes the funnel metric: "paid with zero human contact" becomes measurable from day one. **Status: adopted** (roadmap §13; runbook B1.4; KPIs).
+
+### 20. TinyTap exists — competitor and trademark landmine
+`tinytap.com` resolves: TinyTap is an established "create games for kids" platform. Three consequences: (a) added to the competition table — they prove demand for kid-specific creation, and they're a *builder* (parents assemble games in their editor, inside their subscription), which sharpens our done-for-you wedge; (b) trademark caution for all tap-derived names, including round-one favorite Tapka; (c) their positioning gives us the contrast line: "TinyTap gives you an editor. We give you the app." **Status: adopted** (competition §7; naming criteria §6).
 
 ---
 

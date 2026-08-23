@@ -81,21 +81,25 @@ SamkoOrders is a play-restaurant order pad built for one specific child, entirel
 
 ## 6. Name & domain
 
-**Criteria.** Pronounceable across languages (worldwide ambition); ≤3 syllables; kid-warm but parent-trustworthy; works as a subdomain scheme (`samko.____`); registrable without a fight; clean trademark screen in classes 9/41/42.
+**What "SEO potential" honestly means in 2026.** The exact-match-domain ranking boost died over a decade ago — `customkidsapps.com` does not outrank anyone by virtue of its name. What a name *can* do for search: **(a) own its SERP instantly** (a distinctive name ranks #1 for itself from day one; "Little Apps" never will — it drowns in generic results); **(b) put keywords in every anchor and mention** ("KidApp Studio made this" is a keyword-bearing backlink, "Tapka made this" is not); **(c) generate branded search volume** (memorable names get searched, and branded search is itself a trust/ranking signal); **(d) work in AI-assistant answers** (AEO — a name that states what it does is easier for an assistant to recommend confidently). The ideal is a hybrid: distinctive enough for (a) and (c), descriptive enough for (b) and (d).
 
-**DNS probe (2026-08-23).** "No DNS record" is a *positive signal only* — availability and price must be verified at a registrar; a name can be registered yet unresolved.
+**Criteria.** The above, plus: pronounceable across languages; kid-warm but parent-trustworthy; works as `samko.____`; registrable; clean trademark screen (classes 9/41/42). **New caution:** `tinytap.com` resolves — **TinyTap is an existing kids' game-creation platform**; screen all tap-derived names against their marks, and add them to the competition table (§7).
 
-| Candidate | Probe | Notes |
+**DNS probes (2026-08-23, two batches).** "No DNS record" is a *positive signal only* — verify at a registrar; a name can be registered yet unresolved.
+
+| Candidate | Probe | Assessment |
 |---|---|---|
-| **tapka.app** | no DNS record | **Front-runner.** *Tap* (the toddler's only gesture) + *-ka* (Slavic diminutive); Slovak/Czech for "little paw." 5 letters, globally pronounceable, founder-authentic. `tapka.com` is taken → assess confusion + TM before committing. `samko.tapka.app` reads well. |
-| littleapps.family | no DNS record | Warm, descriptive, English-first. Long as a subdomain base. Good secondary/redirect if the brand stays "Little Apps." |
-| littleapps.kids | no DNS record | .kids (DotKids Foundation) enforces kid-safe content policy — restrictive but perfectly on-brand. |
-| hravo.app | no DNS record | Slovak *hravo* = "playfully, with ease." Distinctive; harder for non-Slavic mouths. |
-| kidlet.app | no DNS record | Cute, English-only cleverness; kidlet.com taken. |
-| appsformykid.com | no DNS record | Pure SEO-descriptive; fine as a landing/campaign domain, weak as a brand. |
-| littleapps.com, appka.com/.app, onelittleapp.com | resolve (taken) | Out, or acquisition money we shouldn't spend. |
+| **By Bedtime** — bybedtime.app, appbybedtime.com | no DNS record | **Finalist A.** The delivery promise as the name: *"Tell us about your kid at breakfast. The app is ready by bedtime."* Category-defining, PR-quotable, emotionally exact for the self-serve-magic strategy (§9). SEO: owns its SERP, high memorability → branded search; carries the promise keyword rather than category keywords. Caution: the name **is** the SLA — a forcing function and a vacation risk. bybedtime.com is taken: check what's hosted there before committing. |
+| **KidApp Studio** — kidapp.studio + kidappstudio.com | no DNS record (both) | **Finalist B.** Keyword-exact ("kid app") + workshop positioning; every mention is a keyword anchor; `samko.kidapp.studio` is clean and literal; assistants can recommend it without explanation. Risks: genericness (harder to own emotionally), and the TinyTap trademark-proximity check applies to the whole "kid app creation" space. |
+| One Kid App — onekidapp.com | no DNS record | Positioning-as-name ("made for one kid: yours") with the keyword embedded. Strong mid-tier; slightly awkward said aloud. |
+| Littleplay — littleplay.app | no DNS record | Soft, warm, "play" keyword; weak distinctiveness. |
+| Tapka — tapka.app | no DNS record | The charm pick from round one — *tap* + Slavic diminutive, "little paw." Now flagged: TinyTap TM proximity; zero keyword value; SERP ownership excellent. |
+| Appling — appling.app | no DNS record | Brandable app-pun (sapling/duckling); no keywords; fine fallback. |
+| Made For One — madeforone.app | no DNS record | Concept-pure gift framing; no category keyword; better as a campaign line than a company. |
+| Satellites: appformykid.com, customkidsapps.com, kidsownapp.com | no DNS record | Not brands — **buy them anyway** (~$10/yr each) as SEO landing/redirect domains whatever the brand choice. |
+| kidmade.com/.app, playmade.app, minimade.app, mykidsapp.com, bybedtime.com, littleapps.com, appka.com/.app | resolve (taken) | Out, or money better spent elsewhere. |
 
-**Recommendation.** Decide between **Tapka** (distinctive brand, global, needs TM screen) and **Little Apps on .family/.kids** (instantly legible, less ownable). Buy the runner-up domains anyway (~$50/yr total insurance), plus the .sk for the home market. Register matching handles (X, Instagram, TikTok, GitHub org, LinkedIn page) the same day the name is chosen. Run a knockout trademark search (EUIPO + USPTO, classes 9/41/42) before spending on brand assets.
+**Recommendation.** **By Bedtime** (`bybedtime.app`) as the brand — it *is* the self-serve promise, it's the name journalists will repeat, and the descriptive satellites cover the keyword layer — with **KidApp Studio** as the keyword-first alternative if the bybedtime.com collision or the SLA-as-name risk feels too hot. Either way: buy the satellites, grab the .sk, register all handles the day the name is chosen, and run the knockout TM search (including against TinyTap) before any brand spend.
 
 ## 7. Competition
 
@@ -104,6 +108,7 @@ SamkoOrders is a play-restaurant order pad built for one specific child, entirel
 | **Khan Academy Kids** (free, excellent) | Owns "learning outcomes for free" | Never position on outcomes alone. Mass-produced; will never contain your child's name, dinosaur obsession, or grandmother's language. |
 | **Claude Artifacts / ChatGPT apps** | Vendors converging on prompt → hosted mini-app | General-purpose, session-shaped, no kid-UX craft, no install story parents understand, no iteration protocol, no gift ritual. The real long-term risk — treated in §21. |
 | **Lovable / Bolt / v0** | "Anyone can build an app" | Built for people who want to *be builders*. Parents want the outcome. No curriculum framing, no child-safety defaults. |
+| **TinyTap** | Existing "create games for kids" platform — closest existing category occupant, and a trademark consideration for tap-derived names | It's a *builder*: parents/teachers assemble games in TinyTap's editor, inside TinyTap's app and subscription. We are done-for-you — five answers, app by bedtime, no editor, owned files, no platform lock-in. Their existence proves demand for kid-specific creation; our wedge is that most parents don't want to do the creating. |
 | **Toca Boca / Pok Pok** | Premium, design-led, no-ads kids' subscriptions — closest in ethos | Still mass-produced and English-first. Pok Pok validates that parents pay ~$60/yr for calm, ad-free play. We add the one thing they structurally can't: *your* child inside the app. |
 | **Wonderbly** (personalized books) | Owns the personalized-gift shelf | Not a competitor — the proof of purchase behavior and the frame to borrow ("made for exactly one child"), in a medium that can't do interaction or iteration. |
 | **Ello, AI-reading toys/apps** | "AI + kids" mindshare and inevitable safety scandals | We are anti-engagement, no-data by construction — positioned to benefit from every story about creepy AI kids' products, if we hold the line loudly. |
@@ -115,9 +120,10 @@ No technology moat. The defensible assets are craft, service, and relationships:
 
 1. **Encoded kid-UX knowledge.** The rulebook generic builders don't have: emoji-first, zero reading required, huge touch targets, positional stability (kids navigate spatially), offline-first, synthesized audio, one action per screen, sibling co-play on one device. Every family served adds rules; the corpus compounds.
 2. **The iteration service.** "Tell us what confused your kid; it's fixed by tonight" is a service promise a chat window doesn't reliably deliver. Productized loop + care receipts.
-3. **Templates over blank pages.** Proven skeletons keep the quality floor high, variance low, token cost low, and output auditable.
-4. **Channel relationships horizontal vendors won't build:** speech-language therapists, heritage weekend schools, grandparent gifting rituals.
-5. **Eventually, the corpus.** Family-to-family remixing ("the counting game the Nováks made, re-skinned for your daughter") — a network asset with no horizontal equivalent.
+3. **The magic itself.** A five-minute order that ends in a working, personalized app by bedtime is an experience competitors must *earn*, not copy — it only feels effortless because the closed factory (templates + rulebook + lint + pipeline) absorbs the effort invisibly.
+4. **Templates over blank pages.** Proven skeletons keep the quality floor high, variance low, token cost low, and output auditable.
+5. **Channel relationships horizontal vendors won't build:** speech-language therapists, heritage weekend schools, grandparent gifting rituals.
+6. **Eventually, the corpus.** Family-to-family remixing ("the counting game the Nováks made, re-skinned for your daughter") — a network asset with no horizontal equivalent.
 
 ## 9. Strategy
 
@@ -135,7 +141,7 @@ No technology moat. The defensible assets are craft, service, and relationships:
 
 **Category creation.** We are not "an app builder" and not "edtech." We are a **workshop for bespoke play-apps** — closer to a personalized-gift brand with a software engine than to a SaaS. All language, pricing, and packaging follow from that frame.
 
-**Openness as strategy.** Open-source the factory kit (template + kid-UX rulebook — it descends from an already-public repo). Parents won't self-serve it; developers who remix it become evangelists; the public repo is the trust proof ("no tracking — see for yourself") and the AEO anchor (§12). Revenue lives in the service: build-for-me, hosting, the loop, the gift ritual.
+**Magic as strategy — closed factory, open output.** *(Founder decision 2026-08-23, reversing the v2 open-source recommendation.)* The factory — templates, rulebook, skill, pipeline — is proprietary trade-secret IP; the product's job is to make setup feel like magic: a five-minute order, then the app appears. The crucial reframe: **self-serve ≠ self-build.** Parents never see code or tooling — they fill in five answers about their kid and pay; that's the entire "setup." What the open kit was supposed to buy, we get elsewhere: trust comes from the *output* being inherently open — every delivered app is readable static files the family owns and can export ("your child's app contains no network calls — view source and check"), backed by a public trust page explaining the privacy architecture; distribution and AEO come from the template gallery, the press story, and the still-public SamkoOrders origin repo (the story stays open; the machine does not).
 
 **Platform posture.** Anthropic showcase potential is real (this is the best kind of Claude Code story) — pursue co-marketing, never dependency: keep the pipeline model-portable, the output vendor-neutral static files.
 
@@ -144,9 +150,9 @@ No technology moat. The defensible assets are craft, service, and relationships:
 **Founder-led, story-first.** The origin story is the launch asset: *"I built a restaurant app for my 4-year-old so he'd play waiter with me. Ten commits later, strangers asked me to build one for their kids."*
 
 **Launch sequence**
-1. **Publish the story + open-source the kit** (blog post on the product domain, mirrored to LinkedIn — the existing build-in-public system and audience are the warm channel).
+1. **Publish the story + open the order form** (blog post on the product domain, mirrored to LinkedIn — the existing build-in-public system and audience are the warm channel; the SamkoOrders origin repo stays public as the story's proof).
 2. **Show HN + Product Hunt** with the kit and the demo apps (numbers, letters, colors). Tech parents are the ideal early adopters: they *could* DIY, which is exactly why they'll respect paying not to.
-3. **Founding Families offer:** 10 concierge slots, paid, delivered within 72h, "fixed by tonight" loop included. Scarcity is honest (solo operator).
+3. **Founding Families offer:** 10 slots, ordered through the self-serve flow like any future customer, delivered inside the promise window, "fixed by tonight" loop included. Scarcity is honest (solo operator behind the curtain).
 4. **Drip the proof:** one case study per family (with consent, no faces) — the app, the care receipts, what changed by week 3.
 5. **Press:** the solo-founder-plus-AI angle is currently press magnetic (Polsia coverage proves the appetite). Pitch tech press (TechCrunch/The Verge) with the global story; Slovak media (Živé.sk, Forbes SK) with the local-hero story.
 
@@ -155,7 +161,7 @@ No technology moat. The defensible assets are craft, service, and relationships:
 | Channel | Hypothesis | Cost |
 |---|---|---|
 | LinkedIn (existing audience) | Warmest; tech parents; direct concierge conversions | Time |
-| Show HN / Product Hunt | Story + open kit = front page plausible; spiky but list-building | Time |
+| Show HN / Product Hunt | Story + live demo apps + a real order flow = front page plausible; spiky but list-building | Time |
 | Diaspora communities (SK/CZ weekend schools, FB groups) | Highest conversion per impression; slow, human | Time |
 | Grandparent gifting | Highest WTP; needs the gift-card ritual + SEO; grows via word-of-mouth | Low |
 | Speech-language therapists | B2B2C multiplier; one therapist = many families | Time, trust |
@@ -179,17 +185,17 @@ No technology moat. The defensible assets are craft, service, and relationships:
 - **Technical:** static pages, no JS frameworks → perfect Core Web Vitals by default. Product domain: marketing site + gallery. **Family subdomains are `noindex` always** — privacy promise and thin-content hygiene in one.
 - **Three keyword layers:** (1) brand; (2) category terms we're coining (low volume today — we define the words the market will search tomorrow); (3) **programmatic long-tail from the gallery:** `{topic} app for a {age}-year-old` × language × interest ("counting game for a dinosaur-obsessed 3-year-old"). Each gallery page is a real, playable demo — programmatic SEO without thin content.
 - **The heritage goldmine:** queries like "slovenské hry pre deti v zahraničí" have essentially zero competition and perfectly qualified intent. Build one landing page per language community as demand appears.
-- **AEO (answer-engine optimization).** The first query is increasingly asked to an AI assistant: "can someone make a custom app for my kid?" Being the canonical answer requires: the public kit repo, press mentions, structured data + llms.txt, and consistent category language assistants can quote. Measure by periodically asking the major assistants and logging what they recommend.
+- **AEO (answer-engine optimization).** The first query is increasingly asked to an AI assistant: "can someone make a custom app for my kid?" Being the canonical answer requires: the public trust page, the template gallery of playable demos, the SamkoOrders origin repo and press mentions, structured data + llms.txt, and consistent category language assistants can quote. Measure by periodically asking the major assistants and logging what they recommend.
 
 ## 13. Product roadmap (staged, each stage a kill-gate)
 
 **Stage 0 — the factory kit** *(days, ~$0)*. Extract SamkoOrders into a starter template + Claude Code skill: static-PWA skeleton, deploy workflow, kid-UX rulebook, single config (name/language/content/palette), iteration protocol. Prove it with three demo apps: **numbers & counting** (Samko's actual next step), **letters & reading** (stretches the template into text), **colors & shapes** (pure generalization test).
 *Gate: one session + template → a good app for a different child on a different topic in under an hour.*
 
-**Stage 1 — concierge MVP** *(weeks, low $100s)*. Landing page + intake form (child's first name/nickname, age, language(s), topic, current obsession) → headless Claude Agent SDK build → deploy to `childname.<domain>` (Cloudflare Pages) → parent gets link + QR + install instructions + gift-card PDF. Feedback via chat thread (WhatsApp/email at this scale) triggers rebuild-and-redeploy with a care receipt. **10 paying families, human-reviewed, charged from day one.**
-*Gate: do strangers pay, and are the apps still opened in week 3? Abandonment, not generation quality, decides everything.*
+**Stage 1 — self-serve front, human review behind (Wizard-of-Oz MVP)** *(weeks, low $100s)*. The parent's experience is fully self-serve and takes five minutes: order form (child's nickname, age, language(s), topic, current obsession) → checkout → *"your app arrives by bedtime."* Behind the curtain: headless Claude Agent SDK build from the template → automated lint → **founder reviews every app inside the delivery window** → deploy to `childname.<domain>` (Cloudflare Pages) → delivery email with link + QR + install instructions + gift-card PDF + care receipt #0. Feedback via chat thread triggers rebuild-and-redeploy with a care receipt. The public promise starts at ≤72h and tightens toward same-day/bedtime as the pipeline hardens (if the brand is By Bedtime, bedtime delivery is the flagship experience from day one for orders placed by noon). **10 paying families, charged from day one — self-service ordering, never self-service building.**
+*Gate: do strangers complete the form and pay without talking to a human, and are the apps still opened in week 3? Abandonment, not generation quality, decides everything.*
 
-**Stage 2 — productized platform** *(only if Stage 1 retention holds)*. Self-serve intake, template gallery, weekly-episode subscriptions (the app grows on schedule), family-to-family remixing, archival "graduation" export, billing, possibly one launcher app. Not designed in detail until Stage 1 says so.
+**Stage 2 — productized platform** *(only if Stage 1 retention holds)*. Remove the human from the loop gradually (review only flagged apps, then spot-checks), template gallery, weekly-episode subscriptions (the app grows on schedule), family-to-family remixing behind a moderation gate, archival "graduation" export, billing, possibly one launcher app. Not designed in detail until Stage 1 says so.
 
 ## 14. Pricing & packaging
 
@@ -266,8 +272,8 @@ The no-tracking promise makes this deliberately hard to measure — resolve by s
 
 | Stage | Funnel & quality metrics |
 |---|---|
-| Acquisition | story views → waitlist → paid (by channel) |
-| Delivery | time-to-live (target ≤72h), refinement rounds to "kid gets it" (target ≤2) |
+| Acquisition | story views → order form started → completed → paid (by channel); **self-serve rate** — paid with zero human contact |
+| Delivery | time-to-live vs. the promise (start ≤72h, tighten toward bedtime), refinement rounds to "kid gets it" (target ≤2) |
 | Retention | W1 / W3 / W8 play (parent-reported), subscription churn, "graduation" vs. abandonment |
 | Love | referral & gift coefficient, unprompted word-of-mouth, refund rate (<5%), care-receipt shares |
 
@@ -277,7 +283,7 @@ The no-tracking promise makes this deliberately hard to measure — resolve by s
 |---|---|---|
 | **Platform absorption** — Artifacts et al. ship "app for my kid, hosted" natively | High × High | Speed while the window is open; moat in craft, ritual, channels (therapists, diaspora, grandparents), brand trust; model-portable pipeline; the horizontal vendor validates the category we already occupy |
 | **Quality variance** — one bad app destroys gift-level pricing | Med × High | Templates only; automated lint; human review at concierge scale; refund guarantee as forcing function |
-| **Trust incident** — one creepy-content screenshot goes viral | Low × Existential | Bounded generation, review pipeline, no-external-anything lint, public open kit, instant response plan; our architecture makes the *category's* scandals (AI toys that record audio) our marketing |
+| **Trust incident** — one creepy-content screenshot goes viral | Low × Existential | Bounded generation, review pipeline, no-external-anything lint, inspectable output apps + public trust page, instant response plan; our architecture makes the *category's* scandals (AI toys that record audio) our marketing |
 | **Abandonment** — the honest killer of kids' products | High × High | W3 as north star; the loop is the retention mechanism; weekly episodes; graduation export converts churn into a keepsake moment |
 | **Willingness to pay** | Med × High | Gift framing, grandparent channel, charge from family #1, kill-gate at 10 families |
 | **Apple PWA policy wobble** (2024 EU DMA episode) | Low × High | Apps always work in a browser tab; Android unaffected; families own portable folders |
@@ -287,18 +293,17 @@ The no-tracking promise makes this deliberately hard to measure — resolve by s
 
 ## 22. Open questions (founder decisions, week 1)
 
-1. **Name:** Tapka vs. Little Apps (§6) — decide after the trademark knockout search.
+1. **Name:** By Bedtime vs. KidApp Studio (§6) — decide after the trademark knockout search (incl. TinyTap) and a look at what bybedtime.com hosts.
 2. **Entity:** run under the existing company vs. incorporate fresh.
-3. **Open-source the kit:** recommended yes (§9) — confirm comfort with it.
-4. **First market emphasis:** global-English story with SK/CZ diaspora follow-up (recommended) vs. Slovak-first launch.
-5. **Time budget:** honest hours/week for Stage 1 — the SLA and slot count derive from it.
-6. **Public use of the origin story:** confirm the boundary (nickname only, no face, no surname — recommended and reversible-proof).
+3. **First market emphasis:** global-English story with SK/CZ diaspora follow-up (recommended) vs. Slovak-first launch.
+4. **Time budget:** honest hours/week for Stage 1 — the SLA and slot count derive from it.
+5. **Public use of the origin story:** confirm the boundary (nickname only, no face, no surname — recommended and reversible-proof).
 
 ## 23. Validation plan
 
 1. **Stage 0** (this month): build the kit; generate numbers/letters/colors apps for real children in the founder's circle. *Kill if the template doesn't generalize without hand-surgery.*
 2. **Stage 1** (weeks 2–8): landing page + 10 paying Founding Families from the personal network + one launch (HN/PH). Track paid conversion, refinement rounds, **week-3 play rate** (parent-reported).
-3. **Decision** (week ~10): **≥6/10 families playing in week 3 + unprompted referrals → Stage 2.** Below → open-source everything, keep the workshop as a story and a side service, stop investing.
+3. **Decision** (week ~10): **≥6/10 families playing in week 3 + unprompted referrals + evidence that strangers order self-serve (paid without talking to a human) → Stage 2.** Below → wind down gracefully, keep the workshop as a story and a side service, stop investing.
 
 ---
 

@@ -10,8 +10,8 @@
 
 ### A1. Company & identity decisions
 
-- [ ] **A1.1 — Decide the name** (S) — Run the §6 shortlist through a knockout trademark search (EUIPO + USPTO, classes 9/41/42) and say it out loud in EN/SK/DE. *Done when: one name chosen, search notes saved to docs/.*
-- [ ] **A1.2 — Buy domains** (S, needs A1.1) — Primary + runner-up + .sk. Verify at registrar (DNS probe ≠ availability). *Done when: domains resolve to a parking page you control.*
+- [ ] **A1.1 — Decide the name** (S) — Finalists: **By Bedtime** (bybedtime.app) vs. **KidApp Studio** (kidapp.studio). Run the knockout trademark search (EUIPO + USPTO, classes 9/41/42 — explicitly including TinyTap's marks), check what bybedtime.com hosts, and say the winner out loud in EN/SK/DE. *Done when: one name chosen, search notes saved to docs/.*
+- [ ] **A1.2 — Buy domains** (S, needs A1.1) — Primary + runner-up + .sk + the SEO satellites (appformykid.com, customkidsapps.com, kidsownapp.com). Verify at registrar (DNS probe ≠ availability). *Done when: domains resolve to a parking page you control.*
 - [ ] **A1.3 — Register handles** (S, needs A1.1) — GitHub org, LinkedIn page, X, Instagram, TikTok, YouTube — same day, even if unused. *Done when: all secured with the brand name.*
 - [ ] **A1.4 — Entity & banking decision** (M) — Existing company vs. new entity; open the account path for the merchant of record. *Done when: decision written in docs/, MoR onboarding started.*
 - [ ] **A1.5 — Merchant of record account** (M, needs A1.4) — Paddle or Lemon Squeezy; test-mode checkout working. *Done when: a $1 test purchase completes end-to-end.*
@@ -47,16 +47,16 @@
 ### B1. Website & funnel
 
 - [ ] **B1.1 — Landing page** (L, needs A1.6, A2.6) — Static, fast, bilingual EN/SK. Origin story, the 4 pillars, live demo links (the three apps), pricing, Founding Families offer, FAQ (privacy, IP policy, guarantee, SLA). *Done when: live on the product domain; Lighthouse ≥95 across the board.*
-- [ ] **B1.2 — Intake form** (M) — Child nickname, age, language(s), topic, current obsession, device, timezone; consent checkboxes baked in. Tally/Typeform first, custom later. *Done when: submissions arrive somewhere durable and trigger a notification.*
+- [ ] **B1.2 — The magic order flow** (M) — Five minutes, five questions: child nickname, age, language(s), topic, current obsession (plus device + timezone); consent checkboxes baked in; ends at checkout and the promise — *"your app arrives by bedtime."* Tally/Typeform first, custom later; the parent never sees anything resembling a builder. *Done when: a stranger can go from landing page to paid order in under 5 minutes, and submissions arrive somewhere durable with a notification.*
 - [ ] **B1.3 — Checkout** (M, needs A1.5) — Gift App $39 / Founding Family $149 live via MoR; refund flow tested. *Done when: real card purchase + refund both verified.*
-- [ ] **B1.4 — Delivery runbook** (M, needs A2.3, A2.5) — The end-to-end concierge script: paid intake → build session → lint → human review checklist → deploy → delivery email (link, QR, install PDF, care receipt #0) → calendar the W1/W3 check-ins. *Done when: dry-run delivers a full order to a friendly tester in <72h with zero improvisation.*
+- [ ] **B1.4 — Delivery runbook (Wizard-of-Oz)** (M, needs A2.3, A2.5) — The end-to-end script behind the self-serve front: paid order → build session → lint → **hidden human review inside the delivery window** → deploy → delivery email (link, QR, install PDF, care receipt #0) → calendar the W1/W3 check-ins. The parent experiences self-serve magic; the founder is the invisible quality gate. *Done when: dry-run delivers a full order to a friendly tester inside the promised window with zero improvisation.*
 - [ ] **B1.5 — Feedback channel** (S) — One thread per family (email or WhatsApp Business), template replies, SLA reminder automation. *Done when: a test "he keeps tapping the wrong thing" message flows to a fix, redeploy, and care receipt.*
 - [ ] **B1.6 — Waitlist** (S, needs B1.1) — Email capture for beyond-10 demand; simple, no marketing automation yet. *Done when: signups land in a list you can export.*
 
 ### B2. Content & PR assets
 
 - [ ] **B2.1 — The origin-story post** (M) — The launch essay: "I built a restaurant app for my 4-year-old…" — with the care-receipt excerpts. Product-domain blog + LinkedIn adaptation via the existing posting system. *Done when: drafted, consent-checked, scheduled.*
-- [ ] **B2.2 — Open-source the kit publicly** (S, needs A2.1–A2.4, A4.2) — README with the story, the rulebook, and a "want one made for your kid instead?" link. *Done when: kit repo public with the service link above the fold.*
+- [ ] **B2.2 — Public trust page + demo gallery** (M, needs A2.4, A3.x, A4.1) — The closed-source trust substitute: a plain-language page explaining the privacy architecture (no network calls, no tracking, files the family owns and can export — "view source and check"), plus the three demo apps as playable public pages. This is the AEO anchor; the factory stays proprietary. *Done when: trust page + gallery live and linked from the landing page.*
 - [ ] **B2.3 — Show HN + Product Hunt drafts** (M, needs B2.1, B2.2) — Titles, first comment (HN), gallery + maker comment (PH); launch-day checklist and reply playbook. *Done when: both drafted and a launch date is set.*
 - [ ] **B2.4 — Press kit + pitch list** (M) — One-pager, screenshots, founder photo, the Polsia-adjacent angle ("a dad, an AI, and an app workshop"); 10 outlets: global tech (TechCrunch, The Verge), parenting newsletters, Slovak media (Živé.sk, Forbes SK). *Done when: kit page live; 10 personalized pitches drafted.*
 - [ ] **B2.5 — Demo video/GIFs** (M, needs A3.x) — 30–60s screen recordings per demo app (hands and screens only). *Done when: three clips exported in web + social formats.*
@@ -64,7 +64,7 @@
 
 ### B3. Measurement & ops
 
-- [ ] **B3.1 — KPI sheet** (S) — One spreadsheet: funnel (views→waitlist→paid), delivery (time-to-live, refinement rounds), retention (W1/W3/W8 parent-reported), love (referrals, refunds). *Done when: every metric has a column and an owner ritual (weekly fill-in).*
+- [ ] **B3.1 — KPI sheet** (S) — One spreadsheet: funnel (views → order started → completed → paid, plus **self-serve rate**: paid with zero human contact), delivery (time-to-live vs. the promise, refinement rounds), retention (W1/W3/W8 parent-reported), love (referrals, refunds). *Done when: every metric has a column and an owner ritual (weekly fill-in).*
 - [ ] **B3.2 — Check-in scripts** (S) — The W1 and W3 parent questions (2 minutes, human, no forms-feeling): "Did they open it this week? What confused them? What did they show someone?" *Done when: scripted and calendared into the delivery runbook.*
 - [ ] **B3.3 — Site analytics, privacy-sane** (S, needs B1.1) — Cookieless page analytics on the *marketing site only* (e.g. a privacy-first counter); never on family apps. *Done when: live and disclosed in the privacy policy.*
 - [ ] **B3.4 — Support & vacation policy** (S) — Publish the honest SLA (before 18:00 CET → live by 22:00 CET) and workshop-closure notices. *Done when: on the FAQ.*
@@ -85,7 +85,7 @@
 - [ ] **C10 — Weekly-episode experiment** (M, needs C5) — For ≥3 families, ship a scheduled evolution ("the shop now sells things that cost twenty") and observe effect on W3+ play. *Done when: 3 episodes shipped; effect noted per family.*
 - [ ] **C11 — Colophon remix test** (M) — Add "make one for another kid" to delivered apps; count taps → gift conversions. *Done when: live in ≥5 apps; conversion logged.*
 - [ ] **C12 — Weekly KPI + angles review** (S, recurring) — Fill B3.1; add any new angle to docs/angles.md; adjust one thing max per week (concierge scale = small n, don't thrash). *Done when: 6 consecutive weekly entries exist.*
-- [ ] **C13 — 🚦 GATE C review (the decision)** (M, needs C5–C12) — Against the pre-committed bar: **≥6/10 families playing in week 3, plus unprompted referrals → Phase D. Below → open-source everything, keep it as a story and a side service, stop investing.** *Done when: the decision memo is written and — either way — published as a workshop note.*
+- [ ] **C13 — 🚦 GATE C review (the decision)** (M, needs C5–C12) — Against the pre-committed bar: **≥6/10 families playing in week 3, plus unprompted referrals, plus evidence strangers order self-serve (paid with zero human contact) → Phase D. Below → wind down gracefully, keep it as a story and a side service, stop investing.** *Done when: the decision memo is written and — either way — published as a workshop note.*
 
 ---
 
@@ -100,7 +100,7 @@
 - [ ] **D5 — AEO program** (M) — llms.txt, structured data, quarterly "ask the assistants" audit; press flywheel.
 - [ ] **D6 — Raise/no-raise memo** (M) — Against §17 thresholds ($1M ARR, W3 >50%, referral >0.5, 2 repeating beachheads); Polsia-comp deck only if raising serves the plan.
 - [ ] **D7 — First-hire decision** (S) — Trigger: >20 active families or 2 SLA breaches/month; role: kid-UX reviewer/community, not engineering.
-- [ ] **D8 — Trust page** (M) — Public, plain-language security/privacy posture; the open kit as exhibit A.
+- [ ] **D8 — Trust deepening** (M) — Third-party privacy/security attestation of the pipeline; publish the audit summary on the trust page (built in B2.2). The closed factory earns external verification instead of open source.
 
 ---
 
@@ -116,4 +116,4 @@
 
 ## Explicitly deferred (decided non-goals for now)
 
-Paid ads · native/App Store apps · a custom web app for intake (forms are fine) · multi-model orchestration · hiring · localization beyond EN/SK marketing (family apps are any-language already) · investor conversations before Gate C evidence.
+Paid ads · native/App Store apps · a custom web app for intake (forms are fine) · **open-sourcing the factory (decided: closed — the output apps are the open part)** · multi-model orchestration · hiring · localization beyond EN/SK marketing (family apps are any-language already) · investor conversations before Gate C evidence.
