@@ -77,4 +77,11 @@ The synthesis of "parents won't build" and "parents will self-serve": the parent
 
 ---
 
+## 2026-09-04
+
+### 21. The curriculum is the product's spine — mechanics × content × difficulty
+Implemented in the MVP: apps are no longer generated per-topic but assembled from a **curriculum catalog** — a learning goal (first counting, counting to 10, first adding, name letters, alphabet, colors & shapes, memory, patterns) is a path of units, each binding a reusable game *mechanic* to a *difficulty slice*, and the child climbs the path adaptively (four-in-a-row advances, misses never demote). Strategic consequences: (a) "any app for any kid" becomes a data problem, not a code problem — new goals are catalog entries, new subjects are new mechanic+content packs; (b) the catalog maps naturally onto real early-learning frameworks (ISCED 0 / štátny vzdelávací program / Montessori scope-and-sequence), which is a partnership and credibility surface (kindergartens, therapists); (c) the weekly-episode subscription gets its engine for free — an episode is just the next units of the path; (d) the order flow's curriculum step, filtered by age, quietly demonstrates expertise no generic app builder shows. The moat deepens: competitors can copy a game, but the accumulated catalog of goal-paths tuned by real kids' play is the compounding asset. **Status: adopted** (implemented in the template engine; catalog growth is now a standing workstream).
+
+---
+
 *Add new angles above this line with a date header. An angle is worth logging if it changes who we sell to, what they pay for, how they find us, or what could kill us.*
